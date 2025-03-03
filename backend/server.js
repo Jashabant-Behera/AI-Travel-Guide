@@ -9,7 +9,6 @@ const authRoutes = require("./routes/authRoutes");
 const itineraryRoutes = require("./routes/itineraryRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
 
-
 const app = express();
 
 connectDB();

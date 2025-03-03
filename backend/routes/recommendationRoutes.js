@@ -1,5 +1,5 @@
 const express = require("express");
-const Recommendation = require("../module/Recommendation");
+const Recommendation = require("../models/Recommendation");
 const { verifyToken } = require("../middleware/auth");
 const {
   createAIRecommendation,

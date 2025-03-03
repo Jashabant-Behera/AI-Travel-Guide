@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Itinerary = require("../module/Itinerary");
+const Itinerary = require("../models/Itinerary");
 const { verifyToken } = require("../middleware/auth");
 const { createAIItinerary } = require("../controllers/itineraryController");
 
