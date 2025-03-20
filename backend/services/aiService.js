@@ -32,4 +32,16 @@ const generateItinerary = async (location, preferences, days) => {
   }
 };
 
-export default { getRecommendations, generateItinerary };
+const chatbotResponse = async (message) => {
+  try {
+    const prompt = `You are a helpful travel assistant. Provide travel recommendations, answer questions, and help with itinerary planning. User: ${message}`;
+
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error Generating Chatbot Response:", error);
+    throw new Error("Failed to generate chatbot response.");
+  }
+};
+
+export default { getRecommendations, generateItinerary, chatbotResponse };

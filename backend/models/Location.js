@@ -14,6 +14,12 @@ const LocationSchema = new Schema({
   images: [String],
   latitude: { type: Number },
   longitude: { type: Number },
+  location: {
+    type: { type: String, enum: ["Point"], default: "Point" },
+    coordinates: { type: [Number], default: [0, 0] },
+  },
 });
+
+LocationSchema.index({ location: "2dsphere" });
 
 export default model("Location", LocationSchema);
