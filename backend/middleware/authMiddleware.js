@@ -1,47 +1,37 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const dotenv = require("dotenv");
-dotenv.config();
+import  jwt  from "jsonwebtoken";
 
-module.exports = async (req, res, next) => {
-  try {
-    const token = req.header("Authorization")?.replace("Bearer ", "");
+const verifyToken = async (req, res, next) => {
+
+	const token = req.cookies?.token || (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.split(" ")[1] : null);
+
     if (!token) {
-      return res.status(401).json({ message: "No token provided" });
-    }
+		return res
+			.status(401)
+			.json({
+				success: false,
+				message: "User not found, please Signup.",
+			});
+	}
+    
+  try {
+      const decode = jwt.verify(token, process.env.JWT_SECRET);
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
+      if (decode.id) {
+        req.body.userId = decode.id;
+        next();
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: "Not authorized. Please log in again.",
+        });
+      }
 
-    req.user = { id: user._id };
-    next();
-  } catch (err) {
-    console.error("Error during token verification:", err);
-    res.status(401).json({ message: "Invalid token", error: err.message });
-  }
+  } catch (error) {
+		return res.status(401).json({
+			success: false,
+			message: "Not authorized. Please log in again.",
+		});
+	}
 };
 
-const protect = async (req, res, next) => {
-  let token;
-
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select("-password");
-      next();
-    } catch (error) {
-      res.status(401).json({ error: "Not authorized, token failed" });
-    }
-  } else {
-    res.status(401).json({ error: "Not authorized, no token" });
-  }
-};
-
-module.exports = { protect };
+export default verifyToken;

@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const RecommendationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const RecommendationSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   category: {
     type: String,
     enum: ["Food", "Cultural", "HiddenGem", "AI Generated"],
@@ -9,10 +9,7 @@ const RecommendationSchema = new mongoose.Schema({
   },
   location: { type: String, required: true },
   name: { type: String, required: true },
-  description: { type: String, maxlength: 500 },
-  rating: { type: Number, min: 1, max: 5, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  description: { type: String },
 });
 
-module.exports = mongoose.model("Recommendation", RecommendationSchema);
+export default model("Recommendation", RecommendationSchema);

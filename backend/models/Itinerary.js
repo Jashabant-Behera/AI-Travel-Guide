@@ -1,20 +1,17 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const ItinerarySchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const ItinerarySchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   location: { type: String, required: true },
+  days:{type: Number, required: true},
   dates: {
-    start: { type: Date, required: true },
-    end: { type: Date, required: true },
+    start: { type: Date },
+    end: { type: Date },
   },
-  activities: [
-    {
-      name: { type: String, required: true },
-      time: { type: String, required: true },
-      description: { type: String },
-    },
-  ],
+  details: { type: String },
+  isPublic: { type: Boolean, default: false },
+  shareToken: { type: String, unique: true, sparse: true },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model("Itinerary", ItinerarySchema);
+export default model("Itinerary", ItinerarySchema);

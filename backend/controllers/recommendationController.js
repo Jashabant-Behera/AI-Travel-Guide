@@ -1,33 +1,28 @@
-const Recommendation = require("../models/Recommendation");
-const { getAIGeminiRecommendations } = require("../services/aiService");
+import Recommendation from "../models/Recommendation.js";
+import aiService from "../services/aiService.js";
 
-// Controller for AI Travel Recommendations
 const createAIRecommendation = async (req, res) => {
   try {
     const { location, preferences } = req.body;
-    if (!location || !preferences || preferences.length === 0) {
+
+    if (
+      !location || 
+      !preferences || 
+      preferences.length === 0
+    ) {
       return res
         .status(400)
         .json({ error: "Location and preferences are required." });
     }
 
-    const aiGeneratedText = await getAIGeminiRecommendations(
-      location,
-      preferences
-    );
-
-    // Truncate the description to 500 characters
-    const truncatedDescription =
-      aiGeneratedText.length > 500
-        ? aiGeneratedText.substring(0, 500)
-        : aiGeneratedText;
+    const aiGeneratedText = await aiService.getRecommendations(location, preferences);
 
     const recommendation = new Recommendation({
-      userId: req.user.id, // Ensure userId is set correctly
+      userId: req.body.userId,
       category: "AI Generated",
       location,
       name: "AI Suggested Places",
-      description: truncatedDescription,
+      description: aiGeneratedText,
       rating: 5,
     });
 
@@ -46,4 +41,4 @@ const createAIRecommendation = async (req, res) => {
   }
 };
 
-module.exports = { createAIRecommendation };
+export {createAIRecommendation};
