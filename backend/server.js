@@ -9,7 +9,6 @@ import itineraryRoutes from "./routes/itineraryRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import locationRoutes from "./routes/locationRoutes.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
-import mapRoutes from "./routes/mapRoutes.js"
 
 const app = express();
 
@@ -32,7 +31,6 @@ app.use("/api/itinerary", itineraryRoutes);
 app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/ai", chatbotRoutes);
-app.use('/api/map', mapRoutes)
 
 process.removeAllListeners('warning');
 

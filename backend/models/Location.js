@@ -9,7 +9,6 @@ const LocationSchema = new Schema({
   category: {
     type: String,
     enum: ["Cultural", "Nature", "Food", "Adventure"],
-    required: true,
   },
   images: [String],
   latitude: { type: Number },
