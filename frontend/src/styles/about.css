@@ -1,0 +1,31 @@
+.about-section {
+  padding: 4rem 2rem;
+  background-color: #f4f7fa;
+  text-align: center;
+}
+
+.about-heading {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 1.5rem;
+}
+
+.about-text {
+  font-size: 1.25rem;
+  color: #444;
+  max-width: 800px;
+  margin: 0 auto 1rem;
+  line-height: 1.8;
+}
+
+.about-subtext {
+  font-size: 1.1rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+strong {
+  color: #00bcd4;
+}

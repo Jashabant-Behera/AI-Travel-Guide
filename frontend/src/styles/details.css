@@ -1,0 +1,22 @@
+.details-section {
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.details-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.details-heading {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.details-description {
+  font-size: 1.2rem;
+  color: #555;
+  line-height: 1.8;
+}
