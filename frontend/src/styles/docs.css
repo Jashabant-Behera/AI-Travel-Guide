@@ -1,6 +1,5 @@
 .docs-container {
   padding: 4rem 2rem;
-  background-color: #ffffff;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -8,28 +7,21 @@
 .docs-title {
   font-size: 3rem;
   text-align: center;
-  color: #222;
   margin-bottom: 2rem;
 }
 
 .docs-section {
   margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .docs-subheading {
   font-size: 2rem;
-  color: #333;
   margin-bottom: 1rem;
 }
 
 .docs-text {
   font-size: 1.1rem;
-  color: #555;
   line-height: 1.8;
 }
 
-.docs-text strong {
-  color: #00bcd4;
-}

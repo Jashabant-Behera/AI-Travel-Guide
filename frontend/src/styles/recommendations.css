@@ -3,15 +3,12 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f0f4ff, #ffffff);
     padding: 20px;
   }
   
   .authform-card {
-    background-color: #fff;
     padding: 40px 30px;
     border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -20,7 +17,6 @@
   .authform-heading {
     font-size: 28px;
     font-weight: 700;
-    color: #333;
     margin-bottom: 30px;
   }
   
@@ -33,20 +29,15 @@
   .authform-input {
     padding: 12px 15px;
     border-radius: 12px;
-    border: 1px solid #d1d5db;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    border: 1px solid #000000;
     font-size: 16px;
   }
   
   .authform-input:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
   }
   
   .authform-button {
-    background-color: #4f46e5;
-    color: white;
     padding: 12px 0;
     border: none;
     border-radius: 12px;
@@ -54,10 +45,6 @@
     font-size: 16px;
     font-weight: 600;
     transition: background-color 0.2s;
-  }
-  
-  .authform-button:hover {
-    background-color: #3730a3;
   }
   
   .authform-links {
@@ -68,13 +55,8 @@
   }
   
   .authform-link {
-    color: #4f46e5;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
-  }
-  
-  .authform-link:hover {
-    color: #3730a3;
   }
   

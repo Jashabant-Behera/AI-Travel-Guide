@@ -1,7 +1,5 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import "../styles/globals.css";
-import Navbar from "@/components/Navbar";
 
 export const metadata = {
   title: "Travel Buddy",
@@ -12,7 +10,7 @@ const Layout = ({ children }) => {
   return (
     <html lang="en">
       <body>
-          <main className="container">{children}</main>
+          {children}
       </body>
     </html>
   );

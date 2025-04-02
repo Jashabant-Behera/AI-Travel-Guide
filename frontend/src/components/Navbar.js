@@ -6,13 +6,21 @@ import "../styles/navbar.css";
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <a href="#about" className="nav-link">About</a>
-      <a href="#details" className="nav-link">Details</a>
-      <a href="#features" className="nav-link">Features</a>
-      <a href="#docs" className="nav-link">Docs</a>
-      <Link href="/profile" className="nav-link">
-        Profile
-      </Link>
+      <div className="navContainer">
+        <Link href="/" className="navlogo">
+          <span className="emoji">🌍</span>
+        </Link>
+        <div className="link">
+          <a href="#features" className="nav-link">Features</a>
+          <a href="#details" className="nav-link">Details</a>
+          <a href="#testimonials" className="nav-link">Testimonials</a>
+          <a href="#docs" className="nav-link">Docs</a>
+          <a href="#about" className="nav-link">About</a>
+        </div>
+        <Link href="/auth" className="nav-link">
+          Login
+        </Link>
+      </div>
     </nav>
   );
 };

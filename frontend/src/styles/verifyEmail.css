@@ -5,17 +5,16 @@
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    background-color: #f8f9fa;
+
   }
   
   .verify-card {
     width: 100%;
     max-width: 400px;
-    background-color: #ffffff;
     padding: 30px;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     text-align: center;
+    border: 1px solid black;
   }
   
   .verify-title {
@@ -25,7 +24,6 @@
   }
   
   .verify-text {
-    color: #555555;
     font-size: 16px;
     margin-bottom: 25px;
   }
@@ -33,31 +31,18 @@
   .verify-button {
     width: 100%;
     padding: 12px;
-    background-color: #0077b6;
-    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     margin-bottom: 15px;
     font-size: 16px;
-    transition: background-color 0.3s;
-  }
-  
-  .verify-button:hover {
-    background-color: #005b8a;
-  }
-  
-  .verify-button.disabled {
-    background-color: #c4c4c4;
-    cursor: not-allowed;
   }
   
   .verify-outline-button {
     width: 100%;
     padding: 12px;
     background-color: transparent;
-    border: 2px solid #0077b6;
-    color: #0077b6;
+    border: 2px solid #000000;
     border-radius: 8px;
     cursor: pointer;
     margin-bottom: 15px;
@@ -65,19 +50,11 @@
     transition: all 0.3s;
   }
   
-  .verify-outline-button:hover {
-    background-color: #0077b6;
-    color: white;
-  }
-  
   .verify-back-link {
-    color: #0077b6;
+    color: #000000;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s;
   }
-  
-  .verify-back-link:hover {
-    color: #005b8a;
-  }
+
   
