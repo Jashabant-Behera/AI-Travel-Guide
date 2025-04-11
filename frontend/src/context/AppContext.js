@@ -8,7 +8,6 @@ export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
   const backendURL = "http://localhost:5000";
-  console.log("Backend URL:", backendURL);
 
   axios.defaults.withCredentials = true;
   axios.defaults.baseURL = backendURL;
@@ -20,7 +19,6 @@ const AppContextProvider = (props) => {
   const getAuthState = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Token:", token);
 
       if (!token) {
         setIsLoggedin(false);

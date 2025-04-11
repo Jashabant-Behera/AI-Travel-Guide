@@ -2,14 +2,15 @@
   background-color: #f8f9fa;
   color: rgb(0, 0, 0);
   padding: 40px 20px;
-  margin: 20px;
+  margin: 10px;
   border-radius: 10px;
   align-items: center;
   text-align: center;
+  justify-content: center;
 }
 
 .faq-heading {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #333;
   margin-bottom: 30px;
   opacity: 0;
@@ -83,4 +84,60 @@
 .faq-toggle:checked + .faq-question + .faq-answer {
   max-height: 200px;
   padding: 10px 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .faq {
+    padding: 30px 15px;
+    margin: 10px;
+  }
+
+  .faq-heading {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .faq-section {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .faq-item {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  .faq-question {
+    font-size: 1.1rem;
+  }
+
+  .faq-answer {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq {
+    padding: 20px 10px;
+    margin: 5px;
+  }
+
+  .faq-heading {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  .faq-item {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .faq-question {
+    font-size: 1rem;
+  }
+
+  .faq-answer {
+    font-size: 0.8rem;
+  }
 }

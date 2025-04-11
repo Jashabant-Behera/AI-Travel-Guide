@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { FaFacebookF, FaGithub, FaTwitter, FaInstagram, FaEnvelope, FaPhone } from "react-icons/fa";
 import "../styles/footer.css";
 
@@ -7,10 +8,13 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
-        {/* First Column - Logo & Address */}
         <div className="footer-column">
-          <div className="logo-box">Your Logo</div>
-          <p className="tagline">Your Tagline Here</p>
+          <div className="logo-box">
+            <Link href="/">
+              <img src="/logo.png" alt="Logo" className="footerlogo" />
+            </Link>
+            <p className="tagline">Your AI Travel Guide</p>
+          </div>
           <h3 className="footer-title">About Us</h3>
           <p className="footer-text">
             We want to help bring talented students and unique startups together.
@@ -20,11 +24,9 @@ const Footer = () => {
             <FaPhone className="icon" /> +91 9999 999 999
           </p>
           <p className="footer-text">
-            <FaEnvelope className="icon" /> youremailid.com
+            <FaEnvelope className="icon" /> travelguide@ai.com
           </p>
         </div>
-
-        {/* Second Column - Navigation Links */}
         <div className="footer-column">
           <h3 className="footer-title">Information</h3>
           <ul className="footer-links">
@@ -48,8 +50,6 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Third Column - Helpful Links & Subscription */}
         <div className="footer-column">
           <h3 className="footer-title">Helpful Links</h3>
           <ul className="footer-links">
@@ -73,8 +73,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Bottom Section - Copyright & Social Media Links */}
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} company.Ltd. All Rights Reserved</p>
         <div className="social-icons">

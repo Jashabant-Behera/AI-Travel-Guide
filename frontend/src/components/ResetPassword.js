@@ -33,7 +33,7 @@ const ResetPassword = () => {
         toast.success(data.message);
         setEmailSent(true);
       } else {
-        toast.error(data.message);
+        toast.error("User not found");
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Something went wrong.');

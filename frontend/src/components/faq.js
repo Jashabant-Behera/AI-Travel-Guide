@@ -5,9 +5,9 @@ import "../styles/faq.css";
 const FAQ = () => {
   return (
     <section className="faq">
-      <div className="faq-heading">
-        <h2>
-          Have Questions? Here Are Quick Answers <br /> To Some Of The Most Common Queries{" "}
+      <div >
+        <h2 className="faq-heading" >
+          Have Questions? Here Are Quick Answers To Some Of The Most Common Queries{" "}
         </h2>
       </div>
       <div className="faq-section">

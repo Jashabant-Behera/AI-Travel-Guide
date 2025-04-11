@@ -55,6 +55,7 @@ const Features = () => {
         </div>
         <div className="feature-card">
           <div className="feature-content">
+          <div className="feature-badge">Working on</div> 
             <h3 className="feature-title">Image Recognition & NLP</h3>
             <p className="feature-description">
               Upload images or text and let AI help identify places or extract info.

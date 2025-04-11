@@ -26,13 +26,8 @@
   align-items: center;
 }
 
-.emoji {
-  font-size: 2rem;
-  transition: transform 0.3s ease-in-out;
-}
-
-.navlogo:hover .emoji {
-  transform: rotate(60deg);
+.navbarlogo {
+  height: 40px;
 }
 
 .link {
@@ -52,4 +47,58 @@
 
 .nav-link:hover {
   background: rgba(0, 0, 0, 0.26);
+}
+
+.hamburger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .navContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .link {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 1rem 0;
+    display: none;
+    align-items: center;
+  }
+
+  .link.active {
+    display: flex;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0;
+  }
+
+  .nav-link:hover {
+    /* transform: translateX(10px); */
+    background: none;
+    transform: scale(1.3);
+    transition: transform 0.1s all-ease;
+  }
+
+  .navContainer {
+    position: relative;
+  }
+
+  .hamburger {
+    display: block;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+  .navContainer > .nav-link {
+    margin-left: auto;
+    margin-right: 3rem;
+  }
 }
