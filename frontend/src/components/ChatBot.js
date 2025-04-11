@@ -1,6 +1,6 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { toast } from "react-hot-toast";
 import "../styles/chatbot.css";
@@ -70,21 +70,19 @@ const Chatbot = () => {
             </div>
           </div>
         ))}
-        {loading && (
-          <div className="chatbot-thinking">Thinking...</div>
-        )}
+        {loading && <div className="chatbot-thinking">Thinking...</div>}
       </div>
       <div className="chatbot-input-container">
-        <Input
+        <input
           placeholder="Ask me about travel, culture, or food..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           className="chatbot-input"
         />
-        <Button onClick={handleSend} disabled={loading} className="chatbot-send-button">
-          <Send size={18} />
-        </Button>
+        <button onClick={handleSend} disabled={loading} className="chatbot-send-button">
+          <Send />
+        </button>
       </div>
     </div>
   );

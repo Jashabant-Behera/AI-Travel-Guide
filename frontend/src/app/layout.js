@@ -1,5 +1,5 @@
-
 import "../styles/globals.css";
+import AppContextProvider from "@/context/AppContext";
 
 export const metadata = {
   title: "Travel Buddy",
@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
   return (
     <html lang="en">
       <body>
-          {children}
+        <AppContextProvider>{children}</AppContextProvider>
       </body>
     </html>
   );

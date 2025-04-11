@@ -2,15 +2,14 @@
 import React from "react";
 import "../styles/features.css";
 
-
 const Features = () => {
   return (
     <section id="features" className="features-section">
       <h2 className="features-heading">Key Features</h2>
-      
+
       <div className="features-grid">
         <div className="feature-card">
-          <img src="/aiAssistant.png" alt="AI-Powered Travel Assistant"/>
+          <img src="/aiAssistant.png" alt="AI-Powered Travel Assistant" />
           <div className="feature-content">
             <h3 className="feature-title">AI-Powered Travel Assistant</h3>
             <p className="feature-description">
@@ -25,10 +24,10 @@ const Features = () => {
               Visualize locations and optimized travel routes for seamless planning.
             </p>
           </div>
-          <img src="/maps.png" alt="Interactive Maps & Routes"/>
+          <img src="/maps.png" alt="Interactive Maps & Routes" />
         </div>
         <div className="feature-card">
-          <img src="/itinerary.png" alt="Itinerary Management"/>
+          <img src="/itinerary.png" alt="Itinerary Management" />
           <div className="feature-content">
             <h3 className="feature-title">Itinerary Management</h3>
             <p className="feature-description">
@@ -43,10 +42,10 @@ const Features = () => {
               Discover hidden gems, local cuisine, and cultural hotspots.
             </p>
           </div>
-          <img src="/heritage.png" alt="Local Food & Culture Insights"/>
+          <img src="/heritage.png" alt="Local Food & Culture Insights" />
         </div>
         <div className="feature-card">
-          <img src="/public.png" alt="Publicly Shareable Itineraries"/>
+          <img src="/public.png" alt="Publicly Shareable Itineraries" />
           <div className="feature-content">
             <h3 className="feature-title">Publicly Shareable Itineraries</h3>
             <p className="feature-description">
@@ -61,12 +60,10 @@ const Features = () => {
               Upload images or text and let AI help identify places or extract info.
             </p>
           </div>
-          <img src="/image-nlp.png" alt="Image Recognition & NLP"/>
+          <img src="/image-nlp.png" alt="Image Recognition & NLP" />
         </div>
-
       </div>
     </section>
-
   );
 };
 

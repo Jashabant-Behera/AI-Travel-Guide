@@ -1,24 +1,33 @@
 "use client";
-
+import React, { useState, useEffect } from "react";
 import "../styles/about.css";
 
 const About = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setIsVisible(true), 300);
+  }, []);
+
   return (
     <section
-      className="about-section"
       id="about"
+      className={`about-section ${isVisible ? "fade-in" : ""}`}
+      aria-labelledby="about-heading"
     >
-      <h2 className="about-heading">About Us</h2>
-      <p className="about-text">
-        Welcome to <strong>AI Travel Guide</strong> — your smart companion for
-        discovering hidden gems, cultural experiences, and planning
-        personalized itineraries around the world.
-      </p>
-      <p className="about-subtext">
-        Powered by cutting-edge AI, our platform helps you uncover the best
-        places, get instant recommendations, and create memorable journeys
-        effortlessly.
-      </p>
+      <article className="about-container">
+        <h2 id="about-heading" className="about-heading">
+          About Us
+        </h2>
+        <p className="about-description">
+          Welcome to <strong>AI Travel Guide</strong> — your smart companion for discovering hidden
+          gems, cultural experiences, and planning personalized itineraries around the world.
+        </p>
+        <p className="about-subtext">
+          Powered by cutting-edge AI, our platform helps you uncover the best places, get instant
+          recommendations, and create memorable journeys effortlessly.
+        </p>
+      </article>
     </section>
   );
 };

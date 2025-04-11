@@ -12,12 +12,12 @@ import chatbotRoutes from "./routes/chatbotRoutes.js";
 
 const app = express();
 
-
 connectDB();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : "*",
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
   })
 );
 app.use(express.json());

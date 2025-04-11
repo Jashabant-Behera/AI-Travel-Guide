@@ -32,7 +32,8 @@ const VerifyEmail = ({ onVerify, onResend }) => {
       <div className="verify-card">
         <h2 className="verify-title">Verify Your Email</h2>
         <p className="verify-text">
-          We’ve sent a verification link to your email. Please check your inbox and click the link to verify.
+          We’ve sent a verification link to your email. Please check your inbox and click the link
+          to verify.
         </p>
         <button
           onClick={handleResend}
@@ -41,10 +42,7 @@ const VerifyEmail = ({ onVerify, onResend }) => {
         >
           {canResend ? "Resend Verification Email" : `Resend in ${resendTimer}s`}
         </button>
-        <button
-          onClick={onVerify}
-          className="verify-outline-button"
-        >
+        <button onClick={onVerify} className="verify-outline-button">
           I have verified
         </button>
         <Link href="/auth?mode=login" className="verify-back-link">

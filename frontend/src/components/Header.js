@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import "../styles/header.css";
 
 const Header = () => {

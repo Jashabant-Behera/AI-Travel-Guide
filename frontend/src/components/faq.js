@@ -5,8 +5,10 @@ import "../styles/faq.css";
 const FAQ = () => {
   return (
     <section className="faq">
-      <div>
-        <h2 className="faq-heading">Have Questions? Here Are Quice Answers To Some Of The Most Common Queries </h2>
+      <div className="faq-heading">
+        <h2>
+          Have Questions? Here Are Quick Answers <br /> To Some Of The Most Common Queries{" "}
+        </h2>
       </div>
       <div className="faq-section">
         <div className="faq-item">
@@ -15,7 +17,8 @@ const FAQ = () => {
             Is this platform free to use?
           </label>
           <div className="faq-answer">
-            Yes! All core features are <strong>free</strong>. Some premium AI-powered features may be added in future updates.
+            Yes! All core features are <strong>free</strong>. Some premium AI-powered features may
+            be added in future updates.
           </div>
         </div>
         <div className="faq-item">
@@ -33,7 +36,9 @@ const FAQ = () => {
             How accurate are the AI recommendations?
           </label>
           <div className="faq-answer">
-            The AI suggests places based on <strong>user preferences, trends, and verified sources</strong>. However, travelers should always <strong>cross-check important details</strong>.
+            The AI suggests places based on{" "}
+            <strong>user preferences, trends, and verified sources</strong>. However, travelers
+            should always <strong>cross-check important details</strong>.
           </div>
         </div>
         <div className="faq-item">
@@ -42,7 +47,8 @@ const FAQ = () => {
             Can I share my itinerary with friends?
           </label>
           <div className="faq-answer">
-            Absolutely! You can <strong>generate shareable links</strong> or <strong>export them as PDFs</strong>.
+            Absolutely! You can <strong>generate shareable links</strong> or{" "}
+            <strong>export them as PDFs</strong>.
           </div>
         </div>
         <div className="faq-item">
@@ -51,7 +57,8 @@ const FAQ = () => {
             Will the AI chatbot replace human travel experts?
           </label>
           <div className="faq-answer">
-            Not entirely. The chatbot helps with <strong>general travel advice</strong>, but local guides and personal research are still valuable.
+            Not entirely. The chatbot helps with <strong>general travel advice</strong>, but local
+            guides and personal research are still valuable.
           </div>
         </div>
       </div>

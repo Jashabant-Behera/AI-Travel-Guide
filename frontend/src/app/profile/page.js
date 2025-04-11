@@ -1,6 +1,6 @@
 import VerifyEmail from "@/components/VerifyEmail";
 import ResetPassword from "@/components/ResetPassword";
-import SavedLocations from "@/components/SavedLocations";
+import SavedLocations from "@/components/SavedItineraries";
 
 export default function ProfilePage() {
   return (

@@ -1,45 +1,88 @@
 .itinerary-card {
-  border: 1px solid black;
+  background: #fff;
   border-radius: 12px;
-  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s;
+  gap: 8px;
+  max-width: 320px;
+  margin: 50px;
 }
 
 .itinerary-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .itinerary-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
-
-.itinerary-description {
-  font-size: 16px;
-  margin-bottom: 16px;
-}
-
-.itinerary-empty-description {
-  font-size: 16px;
-  font-style: italic;
-  margin-bottom: 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
 }
 
 .itinerary-actions {
   display: flex;
-  gap: 10px;
-  justify-content: flex-end;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .itinerary-button {
-  padding: 8px 14px;
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+  margin: 0 4px;
+}
+
+.view-button {
+  background: #007bff;
+  color: white;
+}
+
+.view-button:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.edit-button {
+  background: #ffc107;
+  color: black;
+}
+
+.edit-button:hover {
+  background: #d39e00;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-button:hover {
+  background: #a71d2a;
+  transform: scale(1.05);
+}
+
+@media (max-width: 400px) {
+  .itinerary-card {
+    width: 90%;
+    max-width: none;
+  }
+
+  .itinerary-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .itinerary-button {
+    width: 100%;
+  }
 }

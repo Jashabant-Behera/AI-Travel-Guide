@@ -1,53 +1,132 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import React, { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Image from "next/image";
 import "../styles/authform.css";
 
-const AuthForm = ({ type = "login", onSubmit }) => {
+const AuthForm = () => {
+  const router = useRouter();
+  const { backendURL, setIsLoggedin, getUserData } = useContext(AppContext);
+
+  const [state, setState] = useState("Sign Up");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const onSubmithandler = async (e) => {
     e.preventDefault();
-    if (!email || !password) return alert("Fill all fields!");
-    onSubmit({ email, password });
+    axios.defaults.withCredentials = true;
+
+    try {
+      e.preventDefault();
+
+      axios.defaults.withCredentials = true;
+
+      if (state === "Sign Up") {
+        const { data } = await axios.post(`${backendURL}/api/auth/signup`, {
+          name,
+          email,
+          password,
+        });
+
+        if (data.success) {
+          toast.success(data.message);
+          setIsLoggedin(true);
+          getUserData();
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        const { data } = await axios.post(`${backendURL}/api/auth/login`, {
+          email,
+          password,
+        });
+
+        if (data.success) {
+          toast.success(data.message);
+          setIsLoggedin(true);
+          getUserData();
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong.");
+    }
   };
 
   return (
-    <div className="authform-container">
-      <div className="authform-card">
-        <h2 className="authform-heading">
-          {type === "signup" ? "Create an account" : "Login to your account"}
-        </h2>
-        <form onSubmit={handleSubmit} className="authform-form">
-          <input
-            type="email"
-            placeholder="Email"
-            className="authform-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+    <div className={`auth-container ${state === "Sign Up" ? "signup-bg" : "login-bg"}`}>
+      <div className="auth-box">
+        <div>
+          <Image
+            onClick={() => router.push("/")}
+            src="/logo.png"
+            alt="Logo"
+            width={40}
+            height={40}
+            className="cursor-pointer"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="authform-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button type="submit" className="authform-button">
-            {type === "signup" ? "Sign Up" : "Log In"}
-          </Button>
-        </form>
-        {type === "login" && (
-          <div className="authform-links">
-            <Link href="/auth?mode=signup" className="authform-link">
-              Don’t have an account? Sign up
-            </Link>
-            <Link href="/auth?mode=reset" className="authform-link">
-              Forgot Password?
-            </Link>
+        </div>
+
+        <h1>{state === "Sign Up" ? "Create Account" : "Login"}</h1>
+        <p>{state === "Sign Up" ? "Create Your Account" : "Login to Your Account"}</p>
+
+        <form onSubmit={onSubmithandler}>
+          {state === "Sign Up" && (
+            <div className="auth-input">
+              <Image src="/people.png" alt="People" width={20} height={20} />
+              <input
+                onChange={(e) => setName(e.target.value)}
+                value={name}
+                type="text"
+                placeholder="Full Name"
+                required
+                autoComplete="name"
+              />
+            </div>
+          )}
+
+          <div className="auth-input">
+            <Image src="/mail.png" alt="Mail" width={20} height={20} />
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              type="email"
+              placeholder="Email Id"
+              required
+              autoComplete="email"
+            />
           </div>
+
+          <div className="auth-input">
+            <Image src="/lock.png" alt="Lock" width={20} height={20} />
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type="password"
+              placeholder="Password"
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button type="submit">{state}</button>
+          <span onClick={() => router.push("/reset")}>Forgot Password?</span>
+        </form>
+
+        {state === "Sign Up" ? (
+          <p>
+            Already have an account? <span onClick={() => setState("Login")}>Login Here</span>
+          </p>
+        ) : (
+          <p>
+            Don't have an account? <span onClick={() => setState("Sign Up")}>Sign Up</span>
+          </p>
         )}
       </div>
     </div>

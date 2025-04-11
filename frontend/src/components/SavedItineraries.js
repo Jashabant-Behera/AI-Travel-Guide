@@ -34,11 +34,7 @@ const SavedItineraries = () => {
       ) : (
         <div className="saved-itineraries-grid">
           {itineraries.map((itinerary) => (
-            <ItineraryCard
-              key={itinerary.id}
-              itinerary={itinerary}
-              onDelete={handleDelete}
-            />
+            <ItineraryCard key={itinerary.id} itinerary={itinerary} onDelete={handleDelete} />
           ))}
         </div>
       )}

@@ -1,9 +1,8 @@
 .header {
-  background-image: url('/backdrop1.png');
+  background-image: url("/backdrop1.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 100%;
   height: 100vh;
   padding: 1.5rem 0;
   display: flex;
@@ -14,6 +13,8 @@
   font-size: 2rem;
   scrollbar-width: none;
   flex-direction: column;
+  border-radius: 20px;
+  margin: 10px;
 }
 
 .search-bar {
@@ -42,5 +43,3 @@
 .search-bar button:hover {
   background-color: #0056b3;
 }
-
-

@@ -1,62 +1,61 @@
 .authform-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-  }
-  
-  .authform-card {
-    padding: 40px 30px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
-  
-  .authform-heading {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 30px;
-  }
-  
-  .authform-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .authform-input {
-    padding: 12px 15px;
-    border-radius: 12px;
-    border: 1px solid #000000;
-    font-size: 16px;
-  }
-  
-  .authform-input:focus {
-    outline: none;
-  }
-  
-  .authform-button {
-    padding: 12px 0;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.2s;
-  }
-  
-  .authform-links {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .authform-link {
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.authform-card {
+  padding: 40px 30px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.authform-heading {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.authform-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.authform-input {
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 1px solid #000000;
+  font-size: 16px;
+}
+
+.authform-input:focus {
+  outline: none;
+}
+
+.authform-button {
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.authform-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.authform-link {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
