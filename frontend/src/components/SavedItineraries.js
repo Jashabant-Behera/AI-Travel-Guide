@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import ItineraryCard from "./ItineraryCard";
-import "../styles/savedLocation.css";
+import "../styles/SavedItineraries.css";
 
 const SavedItineraries = () => {
   const [itineraries, setItineraries] = useState([

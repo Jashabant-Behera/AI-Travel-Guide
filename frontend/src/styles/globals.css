@@ -5,3 +5,7 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
 }
+
+html {
+  scroll-behavior: smooth;
+}

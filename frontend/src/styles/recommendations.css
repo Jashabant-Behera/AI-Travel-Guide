@@ -1,61 +1,67 @@
-.authform-container {
+.recommendation-page {
+  padding: 2rem;
+  color: #0a2a52;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.recommendation-page h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #135ab7;
+}
+
+.recommendation-form {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
-.authform-card {
-  padding: 40px 30px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
+.recommendation-form input {
+  padding: 0.7rem;
+  border: 2px solid #90c2f7;
+  border-radius: 10px;
+  min-width: 250px;
+  transition: border-color 0.3s ease;
 }
 
-.authform-heading {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 30px;
-}
-
-.authform-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.authform-input {
-  padding: 12px 15px;
-  border-radius: 12px;
-  border: 1px solid #000000;
-  font-size: 16px;
-}
-
-.authform-input:focus {
+.recommendation-form input:focus {
+  border-color: #3399ff;
   outline: none;
 }
 
-.authform-button {
-  padding: 12px 0;
+.recommendation-form button {
+  background-color: #135ab7;
+  color: white;
   border: none;
-  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease;
 }
 
-.authform-links {
-  margin-top: 20px;
+.recommendation-form button:hover {
+  background-color: #0d3f8f;
+}
+
+.recommendation-output {
+  margin-top: 2rem;
+}
+
+.recommendation-actions {
+  margin-top: 1rem;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 1rem;
 }
 
-.authform-link {
-  text-decoration: none;
+
+.loading-message {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 10px;
+  margin-top: 20px;
+  border-radius: 8px;
+  color: #856404;
   font-weight: 500;
-  transition: color 0.2s;
 }

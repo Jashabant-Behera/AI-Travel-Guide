@@ -1,21 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import React, { useContext, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { AppContext } from "../context/AppContext";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "react-toastify";
 import "../styles/navbar.css";
 
 const Navbar = () => {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { userData, backendURL, setUserData, setIsLoggedin } = useContext(AppContext);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const verifyOTP = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(`${backendURL}/api/auth/verifyOTP`);
+      if (data.success) {
+        router.push("/emailVerify");
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(`${backendURL}/api/auth/logout`);
+      toast.success(data.message);
+      if (data.success) {
+        setIsLoggedin(false);
+        setUserData(null);
+        router.push("/");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
     <nav className="navbar">
       <div className="navContainer">
         <Link href="/" className="navlogo">
-          <img src="/logo.png" alt="Logo" className="navbarlogo" />
+          <img src="/Rlogo.png" alt="Logo" className="navbarlogo" />
         </Link>
 
         <div className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
@@ -38,9 +75,39 @@ const Navbar = () => {
           <a href="#about" className="nav-link">
             About
           </a>
-          <Link href="/auth" className="nav-link">
-            Login
-          </Link>
+          <div className="profile">
+            {userData ? (
+              <div className="user-menu">
+                <Image
+                  src="/bagpack.png"
+                  alt="User Icon"
+                  className="bagpacklogo"
+                  width={24}
+                  height={24}
+                />
+                {userData.name.toUpperCase()}
+                <div className="dropdown">
+                  <ul className="dropdown-list">
+                    {!userData.isAccountVerified && (
+                      <li onClick={verifyOTP} key="verify-email" className="dropdown-item">
+                        Verify Email
+                      </li>
+                    )}
+                    <li key="logout" onClick={logout} className="logout">
+                      Logout
+                    </li>
+                    <li onClick={() => router.push("/profile")} className="dropdown-item">
+                      Dashboard
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <Link href="/auth" className="login-btn">
+                Login
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </nav>

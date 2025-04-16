@@ -7,17 +7,26 @@ import "../styles/footer.css";
 const Footer = () => {
   return (
     <footer className="footer">
+      <div className="logo-box">
+        <div >
+          <Link href="/">
+            <img src="/logo.png" alt="Logo" className="footerlogo" />
+          </Link>
+          <p className="tagline">Your AI Travel Guide</p>
+        </div>
+        <div>
+          <h3 className="title">Subscribe More Info</h3>
+          <div className="subscribe-box">
+            <input type="email" placeholder="Enter your Email" />
+            <button>Subscribe</button>
+          </div>
+        </div>
+      </div>
       <div className="footer-container">
         <div className="footer-column">
-          <div className="logo-box">
-            <Link href="/">
-              <img src="/logo.png" alt="Logo" className="footerlogo" />
-            </Link>
-            <p className="tagline">Your AI Travel Guide</p>
-          </div>
           <h3 className="footer-title">About Us</h3>
           <p className="footer-text">
-            We want to help bring talented students and unique startups together.
+            We want to help travellers & Explorer to enhnace their travel Experience.
           </p>
           <h3 className="footer-title">Contact Us</h3>
           <p className="footer-text">
@@ -66,11 +75,6 @@ const Footer = () => {
               <a href="/privacy">Privacy Policy</a>
             </li>
           </ul>
-          <h3 className="footer-title">Subscribe More Info</h3>
-          <div className="subscribe-box">
-            <input type="email" placeholder="Enter your Email" />
-            <button>Subscribe</button>
-          </div>
         </div>
       </div>
       <div className="footer-bottom">

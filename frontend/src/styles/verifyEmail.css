@@ -1,11 +1,11 @@
-.verify-container {
+.email-verify-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
 
-.verify-card {
+.email-verify-box {
   background: #fff;
   padding: 30px;
   border-radius: 10px;
@@ -15,16 +15,38 @@
   animation: fadeIn 1s ease-in-out;
 }
 
-.verify-title {
+.email-verify-box h1 {
   font-size: 1.8rem;
   color: #333;
   margin-bottom: 15px;
 }
 
-.verify-text {
+.email-verify-box p {
   font-size: 1rem;
   color: #555;
   margin-bottom: 20px;
+}
+
+.verification-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.otp-input {
+  width: 48px;
+  height: 48px;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: border 0.3s ease-in-out;
+}
+
+.otp-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
 .verify-button {
@@ -44,41 +66,16 @@
   cursor: not-allowed;
 }
 
-.verify-outline-button {
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  color: #007bff;
-  border: 2px solid #007bff;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.3s ease-in-out;
-}
-
-.verify-outline-button:hover {
-  background: #007bff;
-  color: #fff;
-}
-
-.verify-back-link {
-  display: block;
-  margin-top: 15px;
-  color: #007bff;
-  font-size: 1rem;
-  text-decoration: none;
-  transition: color 0.3s ease-in-out;
-}
-
-.verify-back-link:hover {
-  color: #0056b3;
-}
-
 @media (max-width: 450px) {
-  .verify-card {
+  .email-verify-box {
     width: 90%;
     padding: 20px;
+  }
+
+  .otp-input {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
   }
 }
 

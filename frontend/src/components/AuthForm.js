@@ -20,23 +20,20 @@ const AuthForm = () => {
   const onSubmithandler = async (e) => {
     e.preventDefault();
     axios.defaults.withCredentials = true;
-
+  
     try {
-      e.preventDefault();
-
-      axios.defaults.withCredentials = true;
-
       if (state === "Sign Up") {
         const { data } = await axios.post(`${backendURL}/api/auth/signup`, {
           name,
           email,
           password,
         });
-
+  
         if (data.success) {
           toast.success(data.message);
           setIsLoggedin(true);
           getUserData();
+          router.push("/");
         } else {
           toast.error(data.message);
         }
@@ -45,11 +42,12 @@ const AuthForm = () => {
           email,
           password,
         });
-
+  
         if (data.success) {
           toast.success(data.message);
           setIsLoggedin(true);
           getUserData();
+          router.push("/");
         } else {
           toast.error(data.message);
         }
@@ -58,6 +56,7 @@ const AuthForm = () => {
       toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
+  
 
   return (
     <div className={`auth-container ${state === "Sign Up" ? "signup-bg" : "login-bg"}`}>
