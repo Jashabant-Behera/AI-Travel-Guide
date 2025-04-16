@@ -6,7 +6,6 @@ export default function AIPage() {
     <div>
       <h2 className="text-3xl font-semibold mb-4">AI Assistant 🤖</h2>
       <ChatBot />
-      <Recommendations />
     </div>
   );
 }

@@ -113,7 +113,7 @@ const Profile = () => {
           </div>
         );
 
-      case "Security":
+      case "Change Password":
         return (
           <div className="security-section">
             <button onClick={() => setShowPasswordForm(!showPasswordForm)}>
@@ -147,7 +147,7 @@ const Profile = () => {
         <nav>
           <h2 className="text-3xl font-semibold mb-4">Dashboard</h2>
           <ul>
-            {["User info", "Your Itinerary", "AI Recommendations", "Security"].map((item) => (
+            {["User info", "Your Itinerary", "AI Recommendations", "Change Password"].map((item) => (
               <li
                 key={item}
                 className={section === item ? "active" : ""}

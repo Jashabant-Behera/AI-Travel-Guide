@@ -1,35 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import RecommendationCard from "./RecommendationCard";
-import { jsPDF } from "jspdf";
-import { html2pdf } from "html2pdf.js";
-import { useRef } from "react";
 import "../styles/recommendations.css";
 
-const Recommendations = () => {
+const Recommendations = ({ user }) => {
   const recommendationRef = useRef();
-
   const [location, setLocation] = useState("");
   const [preferences, setPreferences] = useState("");
   const [recommendation, setRecommendation] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [savedRecommendations, setSavedRecommendations] = useState([]);
+  const [fetchingSaved, setFetchingSaved] = useState(false);
+
+  useEffect(() => {
+    const fetchSavedRecommendations = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token || !user?._id) return;
+
+        setFetchingSaved(true);
+        const response = await fetch(`/api/recommendations/user/${user._id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSavedRecommendations(data.recommendations || []);
+        }
+      } catch (error) {
+        console.error("Error fetching saved recommendations:", error);
+      } finally {
+        setFetchingSaved(false);
+      }
+    };
+
+    fetchSavedRecommendations();
+  }, [user]);
 
   const handleGenerate = async () => {
     if (!location || !preferences) {
-      setLoading(true); // Start loading
-      setRecommendation(null);
       toast.warning("Please fill in both fields.");
       return;
     }
 
     try {
+      setLoading(true);
+      setRecommendation(null);
+
       const { data } = await axios.post("/api/recommendations/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ location, preferences }),
         location,
         preferences: preferences.split(",").map((p) => p.trim()),
       });
@@ -46,46 +69,50 @@ const Recommendations = () => {
 
   const handleSave = async () => {
     try {
-      const token = localStorage.getItem("token"); // or get it from cookies if that's your auth flow
+      const token = localStorage.getItem("token");
       if (!token) {
         alert("You're not logged in!");
         return;
       }
 
-      const response = await fetch("/api/recommendations/ai", {
+      const response = await fetch("/api/recommendations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          userId: user._id, // you must have user info from context or props
+          userId: user._id,
           location,
           preferences,
+          recommendation,
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Recommendation saved:", data.recommendation);
-        alert("Recommendation saved to your profile!");
+        setSavedRecommendations(prev => [data.recommendation, ...prev]);
+        toast.success("Recommendation saved to your profile!");
       } else {
         console.error("Save failed:", data);
-        alert(data.error || "Something went wrong while saving.");
+        toast.error(data.error || "Something went wrong while saving.");
       }
     } catch (error) {
       console.error("Save error:", error);
-      alert("Error saving recommendation. Check console.");
+      toast.error("Error saving recommendation.");
     }
   };
 
   const handleDownloadPDF = () => {
     if (!recommendationRef.current) return;
 
-    import("html2pdf.js").then((html2pdf) => {
-      html2pdf
-        .default()
+    const element = recommendationRef.current.cloneNode(true);
+    const buttons = element.querySelector(".recommendation-actions");
+    if (buttons) buttons.style.display = "none";
+
+    import("html2pdf.js").then(({ default: html2pdf }) => {
+      html2pdf()
         .set({
           margin: 0.5,
           filename: "AI_Recommendation.pdf",
@@ -93,14 +120,15 @@ const Recommendations = () => {
           html2canvas: { scale: 2 },
           jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
         })
-        .from(recommendationRef.current)
+        .from(element)
         .save();
     });
   };
+
   return (
     <div className="recommendation-page">
       <h2>✨ Let AI Guide Your Next Adventure</h2>
-      <p>Tell us where you’re going and what you love — we'll whip up something special.</p>
+      <p>Tell us where you're going and what you love — we'll whip up something special.</p>
 
       <div className="recommendation-form">
         <input
@@ -115,22 +143,50 @@ const Recommendations = () => {
           value={preferences}
           onChange={(e) => setPreferences(e.target.value)}
         />
-        <button onClick={handleGenerate}>Generate Recommendation</button>
+        <button onClick={handleGenerate} disabled={loading}>
+          {loading ? "Generating..." : "Generate Recommendation"}
+        </button>
       </div>
 
       {loading && (
         <div className="loading-message">
-          <p>Please wait... AI is generating your custom adventure plan!</p>
+          <p>✨ AI is crafting your perfect adventure...</p>
+          <div className="loading-spinner"></div>
         </div>
       )}
 
       {!loading && recommendation && (
-        <div className="recommendation-output" ref={recommendationRef}>
-          <RecommendationCard recommendation={recommendation} />
+        <div className="recommendation-result">
+          <div className="recommendation-output" ref={recommendationRef}>
+            <RecommendationCard recommendation={recommendation} />
+          </div>
           <div className="recommendation-actions">
             <button onClick={handleDownloadPDF}>Download as PDF</button>
             <button onClick={handleSave}>Save to Profile</button>
           </div>
+        </div>
+      )}
+
+      {savedRecommendations.length > 0 && (
+        <div className="saved-recommendations">
+          <h3>Your Saved Recommendations</h3>
+          {fetchingSaved ? (
+            <p>Loading your recommendations...</p>
+          ) : (
+            <div className="recommendation-list">
+              {savedRecommendations.map((rec, index) => (
+                <RecommendationCard
+                  recommendation={{
+                    name: rec.name,
+                    description: rec.description,
+                    location: rec.location,
+                    category: rec.category,
+                  }}
+                  isSaved
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

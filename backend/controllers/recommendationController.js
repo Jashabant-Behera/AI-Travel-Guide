@@ -41,4 +41,25 @@ const createAIRecommendation = async (req, res) => {
   }
 };
 
-export {createAIRecommendation};
+const getUserRecommendations = async (req, res) => {
+  const { userId } = req.body.userId;
+
+  try {
+    // Optional: check token matches userId
+    if (req.user.id !== userId) {
+      return res.status(403).json({ error: "Unauthorized access" });
+    }
+
+    const recommendations = await Recommendation.find({
+      userId,
+      category: "AI Generated",
+    }).sort({ _id: -1 }); // newest first
+
+    res.status(200).json({ recommendations });
+  } catch (err) {
+    console.error("Error fetching user recommendations:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export {createAIRecommendation, getUserRecommendations};
