@@ -225,7 +225,7 @@ export const WELCOME_TEMPLATE = `
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <title>Welcome to The Wild Web Ape!</title>
+  <title>Welcome to Your AI Travel Guide!</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -292,39 +292,40 @@ export const WELCOME_TEMPLATE = `
                     <tbody>
                       <tr>
                         <td style="padding: 0 0 24px; font-size: 18px; line-height: 150%; font-weight: bold;">
-                          Welcome to The Wild Web Ape, {{username}}! 🦍🔥
+                          Welcome to your AI Travel Guide, {{username}}! 🌍✈️
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0 0 10px; font-size: 14px; line-height: 150%;">
-                          You’ve officially joined the wildest troop of apes on the internet! Here, we build, break, and conquer the digital jungle.  
+                          Your journey to smarter, smoother, and more personalized travel starts right here. From finding hidden cultural gems to satisfying your foodie cravings — we’ve got your back!
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0 0 16px; font-size: 14px; line-height: 150%; font-weight: 700;">
-                          What’s Next?
+                          What can you explore with us?
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0 0 10px; font-size: 14px; line-height: 150%;">
-                          🏆 Unlock exclusive ape-tier content <br/>
-                          🚀 Access powerful tools and features <br/>
-                          🔥 Connect with fellow digital apes  
+                          🍜 Discover must-try local foods<br/>
+                          🎭 Immerse in rich cultural experiences<br/>
+                          🧭 Plan stress-free travel itineraries<br/>
+                          📍 Save and share your favorite spots
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 20px 0 24px;">
-                          <a class="button">Enter the Jungle</a>
+                          <a class="button">Start Your Journey</a>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 0 0 10px; font-size: 14px; line-height: 150%;">
-                          Stay wild, stay curious, and most importantly... stay trustworthy, Ape! 🦍💪
+                          Your AI assistant is ready to guide you. Just tell us where you want to go and how you like to explore—we’ll handle the rest.
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0 10px; font-size: 14px; line-height: 150%; font-weight: bold;">
-                          - The Wild Web Ape Team  
+                          - The AI Travel Guide Team  
                         </td>
                       </tr>
                     </tbody>

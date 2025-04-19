@@ -9,7 +9,8 @@ import "../styles/authform.css";
 
 const AuthForm = () => {
   const router = useRouter();
-  const { backendURL, setIsLoggedin, getUserData, api, userData, setUserData } = useContext(AppContext);
+  const { backendURL, setIsLoggedin, getUserData, api, userData, setUserData } =
+    useContext(AppContext);
 
   const [state, setState] = useState("Sign Up");
   const [name, setName] = useState("");
