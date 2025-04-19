@@ -28,6 +28,6 @@ import verifyToken from '../middleware/authMiddleware.js';
   router.post("/resetPassword", resetPassword);
 
   router.get("/data", verifyToken, getUserData);
-  router.get('/verify-session', verifyToken, verifySession);
+  router.get("/verify-session", verifyToken, verifySession);
   
   export default router;

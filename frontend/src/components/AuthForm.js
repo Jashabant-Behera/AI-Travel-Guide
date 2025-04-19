@@ -3,14 +3,13 @@
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../context/AppContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import "../styles/authform.css";
 
 const AuthForm = () => {
   const router = useRouter();
-  const { backendURL, setIsLoggedin, getUserData } = useContext(AppContext);
+  const { backendURL, setIsLoggedin, getUserData, api, userData, setUserData } = useContext(AppContext);
 
   const [state, setState] = useState("Sign Up");
   const [name, setName] = useState("");
@@ -19,44 +18,55 @@ const AuthForm = () => {
 
   const onSubmithandler = async (e) => {
     e.preventDefault();
-    axios.defaults.withCredentials = true;
-  
+
     try {
+      let res;
       if (state === "Sign Up") {
-        const { data } = await axios.post(`${backendURL}/api/auth/signup`, {
+        res = await api.post("/api/auth/signup", {
           name,
           email,
           password,
         });
-  
-        if (data.success) {
-          toast.success(data.message);
-          setIsLoggedin(true);
-          getUserData();
-          router.push("/");
-        } else {
-          toast.error(data.message);
-        }
       } else {
-        const { data } = await axios.post(`${backendURL}/api/auth/login`, {
+        res = await api.post("/api/auth/login", {
           email,
           password,
         });
-  
-        if (data.success) {
-          toast.success(data.message);
-          setIsLoggedin(true);
-          getUserData();
-          router.push("/");
-        } else {
-          toast.error(data.message);
+      }
+
+      const { data } = res;
+
+      if (data.success) {
+        toast.success(data.message);
+
+        // Optional if using localStorage
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         }
+
+        const safeUserData = {
+          id: data.user._id,
+          name: data.user.name,
+          email: data.user.email,
+          isVerified: data.user.isAccountVerified,
+        };
+        localStorage.setItem("user", JSON.stringify(safeUserData));
+
+        console.log("token:", data.token);
+
+        setIsLoggedin(true);
+        setUserData(safeUserData);
+
+        router.push("/");
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
+      console.error("Auth error:", error);
       toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
-  
 
   return (
     <div className={`auth-container ${state === "Sign Up" ? "signup-bg" : "login-bg"}`}>
@@ -75,7 +85,7 @@ const AuthForm = () => {
         <h1>{state === "Sign Up" ? "Create Account" : "Login"}</h1>
         <p>{state === "Sign Up" ? "Create Your Account" : "Login to Your Account"}</p>
 
-        <form onSubmit={onSubmithandler}>
+        <form onSubmit={onSubmithandler} method="POST">
           {state === "Sign Up" && (
             <div className="auth-input">
               <Image src="/people.png" alt="People" width={20} height={20} />
@@ -110,7 +120,7 @@ const AuthForm = () => {
               type="password"
               placeholder="Password"
               required
-              autoComplete="current-password"
+              autoComplete={state === "Sign Up" ? "new-password" : "current-password"}
             />
           </div>
 

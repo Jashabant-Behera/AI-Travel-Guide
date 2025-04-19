@@ -6,15 +6,15 @@ import "../styles/Profile.css";
 import ResetPassword from "./ResetPassword";
 import EmailVerify from "./VerifyEmail";
 import Recommendations from "./Recommendations";
-import ItineraryCard from "./ItineraryCard";
 import SavedItineraries from "./SavedItineraries";
 import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../utils/api";
+
 
 const Profile = () => {
-  const { userData, backendURL, setUserData, setIsLoggedin } = useContext(AppContext);
+  const { userData, setUserData, setIsLoggedin, api } = useContext(AppContext);
   const router = useRouter();
 
   const [section, setSection] = useState("User info");
@@ -23,10 +23,10 @@ const Profile = () => {
 
   const logout = async () => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backendURL}/api/auth/logout`);
+      const { data } = await api.post(`/api/auth/logout`);
       toast.success(data.message);
       if (data.success) {
+        localStorage.removeItem("token");
         setIsLoggedin(false);
         setUserData(null);
         router.push("/");
@@ -38,8 +38,7 @@ const Profile = () => {
 
   const verifyOTP = async () => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backendURL}/api/auth/verifyOTP`);
+      const { data } = await api.post(`/api/auth/verifyOTP`);
       if (data.success) {
         toast.success(data.message);
       } else {
@@ -71,6 +70,7 @@ const Profile = () => {
                   width={100}
                   height={100}
                   className="avatar"
+                  priority
                 />
                 <div className="user-details">
                   <h3>{userData.name}</h3>

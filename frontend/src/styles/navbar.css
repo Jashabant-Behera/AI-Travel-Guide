@@ -111,6 +111,15 @@ image{
   min-width: 160px;
 }
 
+.user-menu .dropdown {
+  display: none;
+}
+
+.user-menu:hover .dropdown {
+  display: block;
+}
+
+
 .dropdown-item,
 .logout {
   padding: 10px 16px;

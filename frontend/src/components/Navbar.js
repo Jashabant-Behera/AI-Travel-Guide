@@ -5,14 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "../styles/navbar.css";
 
 const Navbar = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userData, backendURL, setUserData, setIsLoggedin } = useContext(AppContext);
+  const { userData, backendURL, setUserData, setIsLoggedin, api } = useContext(AppContext);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,8 +19,7 @@ const Navbar = () => {
 
   const verifyOTP = async () => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backendURL}/api/auth/verifyOTP`);
+      const { data } = await api.post(`/api/auth/verifyOTP`);
       if (data.success) {
         router.push("/emailVerify");
         toast.success(data.message);
@@ -35,10 +33,10 @@ const Navbar = () => {
 
   const logout = async () => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backendURL}/api/auth/logout`);
+      const { data } = await api.post(`/api/auth/logout`);
       toast.success(data.message);
       if (data.success) {
+        localStorage.removeItem("token");
         setIsLoggedin(false);
         setUserData(null);
         router.push("/");
@@ -55,9 +53,14 @@ const Navbar = () => {
           <img src="/Rlogo.png" alt="Logo" className="navbarlogo" />
         </Link>
 
-        <div className="hamburger" onClick={toggleMenu} aria-label="Toggle menu">
+        <button
+          className="hamburger"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
+        >
           ☰
-        </div>
+        </button>
 
         <div className={`link ${isMenuOpen ? "active" : ""}`}>
           <a href="#features" className="nav-link">
