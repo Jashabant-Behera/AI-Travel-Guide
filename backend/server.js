@@ -16,10 +16,13 @@ connectDB();
 
 app.use(
   cors({
-    origin:'http://localhost:3000',
+    origin:
+      process.env.NODE_ENV === "production" ? process.env.CORS_ORIGIN : "http://localhost:3000",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -32,7 +35,22 @@ app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/ai", chatbotRoutes);
 
-process.removeAllListeners('warning');
+app.use((req, res, next) => {
+  res.status(404).json({ message: "Route not found" });
+});
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: err.message || "Something went wrong!" });
+});
+
+process.removeAllListeners("warning");
+process.on("SIGINT", () => {
+  console.log("Gracefully shutting down...");
+  app.close(() => {
+    console.log("Server closed.");
+    process.exit(0);
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

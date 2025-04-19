@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ItineraryCard from "./ItineraryCard";
 import "../styles/SavedItineraries.css";
 
 const SavedItineraries = () => {
+  const [loading, setLoading] = useState(true);
   const [itineraries, setItineraries] = useState([
     {
       id: "1",
@@ -23,8 +24,30 @@ const SavedItineraries = () => {
   ]);
 
   const handleDelete = (id) => {
-    setItineraries((prev) => prev.filter((item) => item.id !== id));
+    if (window.confirm("Are you sure you want to delete this itinerary?")) {
+      setItineraries((prev) => prev.filter((item) => item.id !== id));
+    }
   };
+
+  const handleEdit = (id) => {
+    // Handle editing the itinerary (e.g., redirect to edit page)
+    console.log("Edit itinerary with id:", id);
+  };
+
+  useEffect(() => {
+    const savedItineraries = JSON.parse(localStorage.getItem("itineraries")) || [];
+    if (Array.isArray(savedItineraries)) {
+      setItineraries(savedItineraries);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (itineraries.length > 0) {
+      localStorage.setItem("itineraries", JSON.stringify(itineraries));
+    }
+  }, [itineraries]);
+  if (loading) return <p>Loading itineraries...</p>;
 
   return (
     <div className="saved-itineraries-container">
@@ -34,7 +57,12 @@ const SavedItineraries = () => {
       ) : (
         <div className="saved-itineraries-grid">
           {itineraries.map((itinerary) => (
-            <ItineraryCard key={itinerary.id} itinerary={itinerary} onDelete={handleDelete} />
+            <ItineraryCard
+              key={itinerary.id}
+              itinerary={itinerary}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
           ))}
         </div>
       )}

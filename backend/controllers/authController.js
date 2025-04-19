@@ -300,6 +300,10 @@ export const getUserData = async (req, res) => {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    console.log("REQ HEADERS:", req.headers);
+    console.log("REQ COOKIES:", req.cookies);
+    console.log("REQ USER:", req.user);
+
     return res.json({ success: true, userData: user });
   } catch (error) {
     console.error(error);

@@ -10,7 +10,7 @@ import Footer from "../components/Footer";
 import Testimonial from "../components/Testimonial";
 import Faq from "../components/faq";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main>
       <Navbar />

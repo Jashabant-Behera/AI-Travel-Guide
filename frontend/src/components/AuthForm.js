@@ -1,21 +1,31 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import "../styles/authform.css";
+import api from "@/utils/api";
 
 const AuthForm = () => {
   const router = useRouter();
-  const { backendURL, setIsLoggedin, getUserData, api, userData, setUserData } =
-    useContext(AppContext);
+  const { setIsLoggedin, setUserData } = useContext(AppContext);
 
   const [state, setState] = useState("Sign Up");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const onSubmithandler = async (e) => {
     e.preventDefault();
@@ -24,14 +34,14 @@ const AuthForm = () => {
       let res;
       if (state === "Sign Up") {
         res = await api.post("/api/auth/signup", {
-          name,
-          email,
-          password,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
         });
       } else {
         res = await api.post("/api/auth/login", {
-          email,
-          password,
+          email: formData.email,
+          password: formData.password,
         });
       }
 
@@ -40,7 +50,6 @@ const AuthForm = () => {
       if (data.success) {
         toast.success(data.message);
 
-        // Optional if using localStorage
         if (data.token) {
           localStorage.setItem("token", data.token);
           api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
@@ -91,8 +100,9 @@ const AuthForm = () => {
             <div className="auth-input">
               <Image src="/people.png" alt="People" width={20} height={20} />
               <input
-                onChange={(e) => setName(e.target.value)}
-                value={name}
+                onChange={handleInputChange}
+                value={formData.name}
+                name="name"
                 type="text"
                 placeholder="Full Name"
                 required
@@ -104,8 +114,9 @@ const AuthForm = () => {
           <div className="auth-input">
             <Image src="/mail.png" alt="Mail" width={20} height={20} />
             <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
+              onChange={handleInputChange}
+              value={formData.email}
+              name="email"
               type="email"
               placeholder="Email Id"
               required
@@ -116,8 +127,9 @@ const AuthForm = () => {
           <div className="auth-input">
             <Image src="/lock.png" alt="Lock" width={20} height={20} />
             <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              onChange={handleInputChange}
+              value={formData.password}
+              name="password"
               type="password"
               placeholder="Password"
               required

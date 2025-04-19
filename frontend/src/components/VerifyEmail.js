@@ -66,19 +66,17 @@ const EmailVerify = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (typeof window === "undefined") return;
-  
-  //   if (userData && userData.isAccountVerified) {
-  //     if (window.location.pathname !== "/profile") {
-  //       router.push("/");
-  //     }
-  //   } else if (!isLoggedin) {
-  //     router.push("/auth");
-  //   }
-  // }, [isLoggedin, userData, router]);
-  
-  
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (userData && userData.isAccountVerified) {
+      if (window.location.pathname !== "/profile") {
+        router.push("/");
+      }
+    } else if (!isLoggedin) {
+      router.push("/auth");
+    }
+  }, [isLoggedin, userData, router]);
 
   return (
     <div className="email-verify-container">

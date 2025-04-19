@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Image from "next/image";
 import "../styles/Profile.css";
 import ResetPassword from "./ResetPassword";
@@ -12,14 +12,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import api from "../utils/api";
 
-
 const Profile = () => {
-  const { userData, setUserData, setIsLoggedin, api } = useContext(AppContext);
+  const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
   const router = useRouter();
 
   const [section, setSection] = useState("User info");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showVerifyForm, setShowVerifyForm] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const logout = async () => {
     try {
@@ -53,7 +53,7 @@ const Profile = () => {
     if (!userData) {
       return (
         <div className="loading-container">
-          <p className="loading-text">Login to get your profile...</p>
+          <p className="loading-text">Fetching your profile...</p>
         </div>
       );
     }
@@ -141,21 +141,36 @@ const Profile = () => {
     }
   };
 
+  useEffect(() => {
+    if (!userData) {
+      const timer = setTimeout(() => {
+        router.push("/auth");
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else {
+      setLoading(false);
+    }
+  }, [userData]);
+  
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div className="profile-container">
       <aside className="sidebar">
         <nav>
           <h2 className="text-3xl font-semibold mb-4">Dashboard</h2>
           <ul>
-            {["User info", "Your Itinerary", "AI Recommendations", "Change Password"].map((item) => (
-              <li
-                key={item}
-                className={section === item ? "active" : ""}
-                onClick={() => setSection(item)}
-              >
-                {item}
-              </li>
-            ))}
+            {["User info", "Your Itinerary", "AI Recommendations", "Change Password"].map(
+              (item) => (
+                <li
+                  key={item}
+                  className={section === item ? "active" : ""}
+                  onClick={() => setSection(item)}
+                >
+                  {item}
+                </li>
+              )
+            )}
           </ul>
         </nav>
         <button onClick={logout} className="logout-btn">

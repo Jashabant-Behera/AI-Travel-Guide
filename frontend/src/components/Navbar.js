@@ -1,34 +1,21 @@
 "use client";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "../styles/navbar.css";
+import api from "@/utils/api";
 
 const Navbar = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userData, backendURL, setUserData, setIsLoggedin, api } = useContext(AppContext);
+  const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const verifyOTP = async () => {
-    try {
-      const { data } = await api.post(`/api/auth/verifyOTP`);
-      if (data.success) {
-        router.push("/emailVerify");
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
   };
 
   const logout = async () => {
@@ -43,8 +30,17 @@ const Navbar = () => {
       }
     } catch (error) {
       toast.error(error.message);
+      setIsLoggedin(false);
+      setUserData(null);
+      router.push("/");
     }
   };
+
+  useEffect(() => {
+    if (!userData) {
+      router.push("/");
+    }
+  }, [userData, router]);
 
   return (
     <nav className="navbar">
@@ -91,11 +87,6 @@ const Navbar = () => {
                 {userData.name.toUpperCase()}
                 <div className="dropdown">
                   <ul className="dropdown-list">
-                    {!userData.isAccountVerified && (
-                      <li onClick={verifyOTP} key="verify-email" className="dropdown-item">
-                        Verify Email
-                      </li>
-                    )}
                     <li key="logout" onClick={logout} className="logout">
                       Logout
                     </li>

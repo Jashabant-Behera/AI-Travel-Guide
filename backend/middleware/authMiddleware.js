@@ -11,6 +11,8 @@ const verifyToken = async (req, res, next) => {
       ? req.headers.authorization.split(" ")[1]
       : null);
 
+  console.log("Received Token:", token);
+
   if (!token) {
     return res.status(401).json({
       success: false,
@@ -19,10 +21,13 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.decode(token);
-    if (decoded?.exp && decoded.exp * 1000 < Date.now()) {
-      throw new Error("Token expired");
-    }
+    // const decoded = jwt.decode(token, process.env.JWT_SECRET);
+
+    // if (decoded?.exp && decoded.exp * 1000 < Date.now()) {
+    //   throw new Error("Token expired");
+    // }
+
+    // console.log("Decoded token:", jwt.decode(token));
 
     const decode = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -42,16 +47,9 @@ const verifyToken = async (req, res, next) => {
       });
     }
 
-    if (decode.id) {
-      req.userId = decode.id;
-      req.user = user;
-      next();
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "Not authorized. Please log in again.",
-      });
-    }
+    req.userId = decode.id;
+    req.user = user;
+    next();
   } catch (error) {
     return res.status(401).json({
       success: false,
