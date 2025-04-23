@@ -3,18 +3,43 @@
 import { useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import axios from "axios";
 import { AppContext } from "@/context/AppContext";
 import Image from "next/image";
+import api from "@/utils/api";
 import "../styles/verifyEmail.css";
 
 const EmailVerify = () => {
-  axios.defaults.withCredentials = true;
-
-  const { backendURL, isLoggedin, userData, getUserData } = useContext(AppContext);
   const router = useRouter();
+  const { isLoggedin, userData, getUserData } = useContext(AppContext);
+
   const inputRefs = useRef([]);
 
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    const OTPArray = inputRefs.current.map((input) => input.value);
+    const OTP = OTPArray.join("");
+
+    if (OTP.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
+    try {
+      const { data } = await api.post(`/api/auth/verifyAccount`, { OTP });
+
+      if (data.success) {
+        toast.success(data.message);
+        await getUserData();
+        router.push("/profile");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong.");
+    }
+  };
+  
   const handleInput = (e, index) => {
     if (e.target.value.length > 0 && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
@@ -39,31 +64,6 @@ const EmailVerify = () => {
         }
       }
     });
-  };
-
-  const onSubmitHandler = async (e) => {
-    e.preventDefault();
-
-    const OTPArray = inputRefs.current.map((input) => input.value);
-    const OTP = OTPArray.join("");
-
-    if (OTP.length !== 6) {
-      toast.error("Please enter a valid 6-digit OTP.");
-      return;
-    }
-
-    try {
-      const { data } = await axios.post(`${backendURL}/api/auth/verifyAccount`, { OTP });
-
-      if (data.success) {
-        toast.success(data.message);
-        getUserData();
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong.");
-    }
   };
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "@/utils/api";
 import { toast } from "react-toastify";
 import RecommendationCard from "./RecommendationCard";
 import "../styles/recommendations.css";
@@ -52,7 +52,7 @@ const Recommendations = ({ user }) => {
       setLoading(true);
       setRecommendation(null);
 
-      const { data } = await axios.post("/api/recommendations/ai", {
+      const { data } = await api.post("/api/recommendations/ai", {
         location,
         preferences: preferences.split(",").map((p) => p.trim()),
       });
@@ -92,7 +92,7 @@ const Recommendations = ({ user }) => {
       const data = await response.json();
 
       if (response.ok) {
-        setSavedRecommendations(prev => [data.recommendation, ...prev]);
+        setSavedRecommendations((prev) => [data.recommendation, ...prev]);
         toast.success("Recommendation saved to your profile!");
       } else {
         console.error("Save failed:", data);

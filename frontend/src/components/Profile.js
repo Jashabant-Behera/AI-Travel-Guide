@@ -113,15 +113,23 @@ const Profile = () => {
           </div>
         );
 
-      case "Change Password":
+      case "Settings":
         return (
           <div className="security-section">
-            <button onClick={() => setShowPasswordForm(!showPasswordForm)}>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowPasswordForm(!showPasswordForm);
+              }}
+            >
               {showPasswordForm ? "Cancel Password Change" : "Change Password"}
             </button>
             {showPasswordForm && <ResetPassword />}
 
-            {!userData?.isAccountVerified && (
+            {userData?.isVerified ? (
+              <p>Your account is already verified.</p>
+            ) : (
               <button
                 onClick={() => {
                   verifyOTP();
@@ -151,26 +159,27 @@ const Profile = () => {
       setLoading(false);
     }
   }, [userData]);
-  
+
   if (loading) return <p>Loading...</p>;
 
   return (
     <div className="profile-container">
       <aside className="sidebar">
         <nav>
-          <h2 className="text-3xl font-semibold mb-4">Dashboard</h2>
+          <div className="logo-container">
+            <img onClick={() => router.push("/")} src="/logo.png" alt="Logo" className="logo" />
+            <h2 className="text-3xl font-semibold mb-4">Dashboard</h2>
+          </div>
           <ul>
-            {["User info", "Your Itinerary", "AI Recommendations", "Change Password"].map(
-              (item) => (
-                <li
-                  key={item}
-                  className={section === item ? "active" : ""}
-                  onClick={() => setSection(item)}
-                >
-                  {item}
-                </li>
-              )
-            )}
+            {["User info", "Your Itinerary", "AI Recommendations", "Settings"].map((item) => (
+              <li
+                key={item}
+                className={section === item ? "active" : ""}
+                onClick={() => setSection(item)}
+              >
+                {item}
+              </li>
+            ))}
           </ul>
         </nav>
         <button onClick={logout} className="logout-btn">

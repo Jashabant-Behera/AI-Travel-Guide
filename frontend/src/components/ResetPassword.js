@@ -1,23 +1,18 @@
-
 "use client";
 
-import React, { useContext, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { AppContext } from '@/context/AppContext';
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import api from "@/utils/api";
 import "../styles/resetPassword.css";
 
 const ResetPassword = () => {
-  axios.defaults.withCredentials = true;
-
-  const { backendURL } = useContext(AppContext);
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [emailSent, setEmailSent] = useState(false);
-  const [OTP, setOTP] = useState('');
+  const [OTP, setOTP] = useState("");
   const [OTPSubmit, setOTPSubmit] = useState(false);
 
   const inputRefs = useRef([]);
@@ -25,7 +20,7 @@ const ResetPassword = () => {
   const onSubmitEmail = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${backendURL}/api/auth/resetOTP`, {
+      const { data } = await api.post(`/api/auth/resetOTP`, {
         email,
       });
 
@@ -36,14 +31,14 @@ const ResetPassword = () => {
         toast.error("User not found");
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Something went wrong.');
+      toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
 
   const onSubmitOTP = async (e) => {
     e.preventDefault();
     const OTPArray = inputRefs.current.map((el) => el.value);
-    const enteredOTP = OTPArray.join('');
+    const enteredOTP = OTPArray.join("");
 
     setOTP(enteredOTP);
     setOTPSubmit(true);
@@ -56,16 +51,16 @@ const ResetPassword = () => {
   };
 
   const handleKeyDown = (e, index) => {
-    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+    if (e.key === "Backspace" && e.target.value === "" && index > 0) {
       inputRefs.current[index - 1].focus();
     }
   };
 
   const handlePaste = (e) => {
     e.preventDefault();
-    const paste = e.clipboardData.getData('text').slice(0, 6);
+    const paste = e.clipboardData.getData("text").slice(0, 6);
 
-    paste.split('').forEach((char, index) => {
+    paste.split("").forEach((char, index) => {
       if (inputRefs.current[index]) {
         inputRefs.current[index].value = char;
         if (index < inputRefs.current.length - 1) {
@@ -78,7 +73,7 @@ const ResetPassword = () => {
   const onSubmitNewPassword = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${backendURL}/api/auth/resetPassword`, {
+      const { data } = await api.post(`/api/auth/resetPassword`, {
         email,
         OTP,
         newPassword,
@@ -86,29 +81,24 @@ const ResetPassword = () => {
 
       if (data.success) {
         toast.success(data.message);
-        router.push('/auth');
+        router.push("/profile");
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to reset password.');
+      toast.error(error.response?.data?.message || "Failed to reset password.");
     }
   };
 
   return (
     <div
       className={`reset-container ${
-        !emailSent ? 'email-stage' : OTPSubmit ? 'password-stage' : 'otp-stage'
+        !emailSent ? "email-stage" : OTPSubmit ? "password-stage" : "otp-stage"
       }`}
     >
       <div className="reset-box">
         <div className="logo-container">
-          <img
-            onClick={() => router.push('/')}
-            src="/logo.png"
-            alt="Logo"
-            className="logo"
-          />
+          <img onClick={() => router.push("/")} src="/logo.png" alt="Logo" className="logo" />
         </div>
 
         {!emailSent && (
@@ -116,7 +106,7 @@ const ResetPassword = () => {
             <h1>Reset Password</h1>
             <p>Enter your registered email address</p>
             <div className="reset-input">
-              <img src="/mail.png" alt="Mail Icon" className='mail' />
+              <img src="/mail.png" alt="Mail Icon" className="mail" />
               <input
                 type="email"
                 placeholder="Email Id"

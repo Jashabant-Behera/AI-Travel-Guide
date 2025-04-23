@@ -2,16 +2,12 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 
 const verifyToken = async (req, res, next) => {
-  console.log("Cookies:", req.cookies);
-  console.log("Headers:", req.headers);
 
   const token =
     req.cookies?.token ||
     (req.headers.authorization?.startsWith("Bearer ")
       ? req.headers.authorization.split(" ")[1]
       : null);
-
-  console.log("Received Token:", token);
 
   if (!token) {
     return res.status(401).json({
@@ -21,14 +17,6 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    // const decoded = jwt.decode(token, process.env.JWT_SECRET);
-
-    // if (decoded?.exp && decoded.exp * 1000 < Date.now()) {
-    //   throw new Error("Token expired");
-    // }
-
-    // console.log("Decoded token:", jwt.decode(token));
-
     const decode = jwt.verify(token, process.env.JWT_SECRET);
 
     if (!decode.id) {

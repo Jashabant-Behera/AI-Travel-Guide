@@ -87,11 +87,11 @@ const Navbar = () => {
                 {userData.name.toUpperCase()}
                 <div className="dropdown">
                   <ul className="dropdown-list">
-                    <li key="logout" onClick={logout} className="logout">
-                      Logout
-                    </li>
                     <li onClick={() => router.push("/profile")} className="dropdown-item">
                       Dashboard
+                    </li>
+                    <li key="logout" onClick={logout} className="logout">
+                      Logout
                     </li>
                   </ul>
                 </div>

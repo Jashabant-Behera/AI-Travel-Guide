@@ -13,13 +13,14 @@ const AppContextProvider = (props) => {
 
   const getUserData = async () => {
     try {
-      const response = await api.get(`/api/auth/data`);
-      if (response.data.success) {
+      const { data } = await api.get(`/api/auth/data`);
+      if (data.success) {
         const user = {
-          id: response.data.userData._id,
-          name: response.data.userData.name,
-          email: response.data.userData.email,
-          isVerified: response.data.userData.isAccountVerified,
+          id: data.user._id,
+          name: data.user.name,
+          email: data.user.email,
+          isVerified: data.user.isAccountVerified,
+          savedItineraries: data.user.savedItineraries,
         };
         setUserData(user);
         localStorage.setItem("user", JSON.stringify(user));
@@ -38,11 +39,8 @@ const AppContextProvider = (props) => {
     if (token) {
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      console.log("Token before API call:", token);
-
       try {
         const response = await api.get(`/api/auth/isAuth`);
-        console.log("Token from localStorage:", token);
 
         if (response.data.success) {
           setIsLoggedin(true);
@@ -50,8 +48,6 @@ const AppContextProvider = (props) => {
         } else {
           handleLogout();
         }
-
-        console.log("Auth Response:", response.data);
       } catch (error) {
         console.error("Auth error:", error);
         handleLogout();
@@ -84,7 +80,7 @@ const AppContextProvider = (props) => {
     isLoggedin,
     setIsLoggedin,
     loading,
-    api,
+    handleLogout,
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

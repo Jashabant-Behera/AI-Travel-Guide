@@ -44,13 +44,6 @@ app.use((err, req, res, next) => {
 });
 
 process.removeAllListeners("warning");
-process.on("SIGINT", () => {
-  console.log("Gracefully shutting down...");
-  app.close(() => {
-    console.log("Server closed.");
-    process.exit(0);
-  });
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

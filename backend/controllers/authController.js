@@ -113,7 +113,7 @@ export const logout = async (req, res) => {
 
 export const sendOTP = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req;
 
     const user = await userModel.findById(userId);
 
@@ -148,7 +148,8 @@ export const sendOTP = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-  const { userId, OTP } = req.body;
+  const userId = req.userId;
+  const { OTP } = req.body;
 
   if (!userId || !OTP) {
     return res.status(400).json({ success: false, message: "Missing Details" });
@@ -285,26 +286,19 @@ export const resetPassword = async (req, res) => {
 
 export const getUserData = async (req, res) => {
   try {
-    const userId = req.user?._id || req.userId;
-
-    console.log("User from token:", req.user);
-    console.log("User ID from token:", req.userId);
+    const userId = req.userId;
 
     if (!userId) {
       return res.status(400).json({ success: false, message: "User ID is required" });
     }
 
-    const user = await userModel.findById(userId).select("name email isAccountVerified createdAt");
+    const user = await userModel.findById(userId).select("name email isAccountVerified savedItineraries createdAt");
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    console.log("REQ HEADERS:", req.headers);
-    console.log("REQ COOKIES:", req.cookies);
-    console.log("REQ USER:", req.user);
-
-    return res.json({ success: true, userData: user });
+    return res.json({ success: true, user: user });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "Internal server error" });
