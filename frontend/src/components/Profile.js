@@ -11,6 +11,16 @@ import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import api from "../utils/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHome,
+  faUser,
+  faComments,
+  faGear,
+  faRightFromBracket,
+  faBars,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Profile = () => {
   const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
@@ -20,6 +30,7 @@ const Profile = () => {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showVerifyForm, setShowVerifyForm] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = async () => {
     try {
@@ -49,6 +60,10 @@ const Profile = () => {
     }
   };
 
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   const renderSection = () => {
     if (!userData) {
       return (
@@ -61,23 +76,21 @@ const Profile = () => {
     switch (section) {
       case "User info":
         return (
-          <div>
-            <main className="profile-main">
-              <div className="profile-header">
-                <Image
-                  src="/avatar.png"
-                  alt="User avatar"
-                  width={100}
-                  height={100}
-                  className="avatar"
-                  priority
-                />
-                <div className="user-details">
-                  <h3>{userData.name}</h3>
-                  <p>{userData.location || "Unknown Location"}</p>
-                </div>
+          <div className="content">
+            <div className="profile-header">
+              <Image
+                src="/avatar.png"
+                alt="User avatar"
+                width={100}
+                height={100}
+                className="avatar"
+                priority
+              />
+              <div className="user-details">
+                <h3>{userData.name}</h3>
+                <p>{userData.location || "Unknown Location"}</p>
               </div>
-            </main>
+            </div>
             <form className="profile-form">
               <div className="form-group">
                 <label>Name</label>
@@ -101,21 +114,21 @@ const Profile = () => {
 
       case "Your Itinerary":
         return (
-          <div>
+          <div className="content">
             <SavedItineraries />
           </div>
         );
 
       case "AI Recommendations":
         return (
-          <div>
+          <div className="content">
             <Recommendations />
           </div>
         );
 
       case "Settings":
         return (
-          <div className="security-section">
+          <div className="content security-section">
             <button
               type="button"
               onClick={(e) => {
@@ -163,29 +176,48 @@ const Profile = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="profile-container">
-      <aside className="sidebar">
-        <nav>
-          <div className="logo-container">
-            <img onClick={() => router.push("/")} src="/logo.png" alt="Logo" className="logo" />
-            <h2 className="text-3xl font-semibold mb-4">Dashboard</h2>
-          </div>
+    <div className="profile-wrapper">
+      <div className="toogle" onClick={toggleMenu}>
+        <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} className="toggle-icon" />
+      </div>
+
+      <div className={`navigation ${menuOpen ? "responsive" : ""}`}>
+        <div className="nav-content">
           <ul>
-            {["User info", "Your Itinerary", "AI Recommendations", "Settings"].map((item) => (
-              <li
-                key={item}
-                className={section === item ? "active" : ""}
-                onClick={() => setSection(item)}
-              >
-                {item}
-              </li>
-            ))}
+            {["User info", "Your Itinerary", "AI Recommendations", "Settings"].map((item, index) => {
+              const iconMap = [faHome, faUser, faComments, faGear];
+
+              return (
+                <li
+                  key={item}
+                  className={`list ${section === item ? "active" : ""}`}
+                  onClick={() => setSection(item)}
+                >
+                  <b></b>
+                  <b></b>
+                  <a>
+                    <span className="icon">
+                      <FontAwesomeIcon icon={iconMap[index]} />
+                    </span>
+                    <span className="title">{item}</span>
+                  </a>
+                </li>
+              );
+            })}
           </ul>
-        </nav>
-        <button onClick={logout} className="logout-btn">
-          Log out
-        </button>
-      </aside>
+          
+          <div className="sign-out-container">
+            <li className="list sign-out" >
+              <a>
+                <span className="icon">
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                </span>
+                <span className="title">Sign Out</span>
+              </a>
+            </li>
+          </div>
+        </div>
+      </div>
 
       {renderSection()}
     </div>

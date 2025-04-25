@@ -1,5 +1,9 @@
 import "../styles/globals.css";
 import AppContextProvider from "@/context/AppContext";
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+config.autoAddCss = false;
+
 
 export const metadata = {
   title: "AI Travel Buddy",
