@@ -1,0 +1,142 @@
+"use client";
+import "../styles/userinfo.css";
+import React, { useContext, useState, useRef } from "react";
+import { AppContext } from "../context/AppContext";
+import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen, faCheck } from "@fortawesome/free-solid-svg-icons";
+
+const UserInfo = () => {
+  const { userData } = useContext(AppContext);
+  const [editMode, setEditMode] = useState({
+    name: false,
+    gender: false,
+    location: false,
+  });
+
+  const [formValues, setFormValues] = useState({
+    name: userData.name,
+    gender: userData.gender || "",
+    location: userData.location || "",
+  });
+
+  const [bannerImage, setBannerImage] = useState("/banner.jpg");
+  const [profileImage, setProfileImage] = useState("/avatar.png");
+  const bannerInputRef = useRef(null);
+  const profileInputRef = useRef(null);
+
+  const handleInputChange = (e) => {
+    setFormValues({ ...formValues, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = (field) => {
+    setEditMode({ ...editMode, [field]: false });
+    // Add logic to update backend if needed
+  };
+
+  const handleImageChange = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      const newUrl = URL.createObjectURL(file);
+      if (type === "banner") setBannerImage(newUrl);
+      else setProfileImage(newUrl);
+    }
+  };
+
+  const triggerFileInput = (ref) => {
+    ref.current.click();
+  };
+
+  return (
+    <div className="user-info-container">
+      <div className="banner-profile-container">
+        <div className="banner-section">
+          <Image src={bannerImage} alt="Banner" fill className="banner-img" />
+          <div className="banner-corner-effect"></div>
+          <div className="penoverlay" onClick={() => triggerFileInput(bannerInputRef)}>
+            <FontAwesomeIcon icon={faPen} className="penicon" />
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            ref={bannerInputRef}
+            onChange={(e) => handleImageChange(e, "banner")}
+            className="hidden-input"
+          />
+        </div>
+
+        <div className="profile-img-wrapper">
+          <Image
+            src={profileImage}
+            alt="Profile"
+            width={160}
+            height={160}
+            className="profile-img"
+          />
+          <div className="profile-corner-effect"></div>
+          <div className="edit-overlay" onClick={() => triggerFileInput(profileInputRef)}>
+            <FontAwesomeIcon icon={faPen} className="edit-icon" />
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            ref={profileInputRef}
+            onChange={(e) => handleImageChange(e, "profile")}
+            className="hidden-input"
+          />
+        </div>
+      </div>
+
+      <div className="user-basic-info">
+        <h2>{formValues.name}</h2>
+        <p>{userData.email}</p>
+        <small>
+          {formValues.location || "Unknown Location"} || Joined {userData.createdAt || "N/A"}
+        </small>
+      </div>
+      <h3 className="section-title">User Information</h3>
+      <div className="editable-form">
+        {["name", "gender", "location"].map((field) => (
+          <div className="editable-field" key={field}>
+            <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            {editMode[field] ? (
+              <div className="edit-group">
+                <input
+                  type="text"
+                  name={field}
+                  value={formValues[field]}
+                  onChange={handleInputChange}
+                  className="editable-input"
+                />
+                <button onClick={() => handleSave(field)} className="save-btn">
+                  <FontAwesomeIcon icon={faCheck} />
+                </button>
+              </div>
+            ) : (
+              <div className="view-group">
+                <span className="readonly-text">{formValues[field] || "Not specified"}</span>
+                <button
+                  className="edit-btn"
+                  onClick={() => setEditMode({ ...editMode, [field]: true })}
+                >
+                  <FontAwesomeIcon icon={faPen} />
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+
+        <div className="editable-field">
+          <label>Email</label>
+          <span className="readonly-text">{userData.email}</span>
+        </div>
+        <div className="editable-field">
+          <label>Join Date</label>
+          <span className="readonly-text">{userData.createdAt || "N/A"}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserInfo;

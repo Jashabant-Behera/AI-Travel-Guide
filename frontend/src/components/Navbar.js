@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "../styles/navbar.css";
 import api from "@/utils/api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faRightFromBracket, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const router = useRouter();
@@ -88,9 +90,11 @@ const Navbar = () => {
                 <div className="dropdown">
                   <ul className="dropdown-list">
                     <li onClick={() => router.push("/profile")} className="dropdown-item">
+                    <FontAwesomeIcon icon={faUser} />
                       Dashboard
                     </li>
                     <li key="logout" onClick={logout} className="logout">
+                      <FontAwesomeIcon icon={faRightFromBracket} />
                       Logout
                     </li>
                   </ul>

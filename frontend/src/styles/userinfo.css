@@ -1,0 +1,423 @@
+.user-info-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.banner-profile-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  border-radius: 16px;
+  padding: 10px;
+}
+
+.banner-section {
+  position: relative;
+  width: 100%;
+  height: 90%;
+  border-radius: 16px 16px 0 16px;
+  overflow: hidden;
+}
+
+.banner-img {
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.banner-corner-effect {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #fff;
+  bottom: 0;
+  right: 0;
+  border-radius: 20px 0 20px 0;
+}
+
+.banner-corner-effect::before,
+.banner-corner-effect::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  z-index: 1;
+}
+
+.banner-corner-effect::before {
+  bottom: 40px;
+  right: 0;
+  border-radius: 0 0 16px 0;
+  box-shadow: 5px 5px #fff;
+}
+
+.banner-corner-effect::after {
+  bottom: 0;
+  right: 40px;
+  border-radius: 0 0 16px 0;
+  box-shadow: 5px 5px #fff;
+}
+
+.penoverlay {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  bottom: 5px;
+  right: 5px;
+  z-index: 10;
+  cursor: pointer;
+  transition: 0.9s all ease;
+}
+
+.penoverlay:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.penicon {
+  font-size: 16px;
+}
+
+.profile-img-wrapper {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.profile-img {
+  object-fit: cover;
+  border-radius: 20px;
+  border: 5px solid rgb(255, 255, 255);
+}
+
+.profile-corner-effect {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: #ffffff;
+  bottom: 8px;
+  right: 0;
+  border-radius: 20px 0 20px 0;
+}
+
+.profile-corner-effect::before,
+.profile-corner-effect::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: transparent;
+  z-index: 1;
+}
+
+.profile-corner-effect::before {
+  bottom: 40px;
+  right: 5px;
+  border-radius: 0 0 10px 0;
+  box-shadow: 5px 5px #ffffff;
+}
+
+.profile-corner-effect::after {
+  bottom: 4px;
+  right: 40px;
+  border-radius: 0 0 10px 0;
+  box-shadow: 4px 4px #ffffff;
+}
+
+.edit-overlay {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  bottom: 13px;
+  right: 5px;
+  z-index: 10;
+  cursor: pointer;
+  transition: 0.9s all ease;
+}
+
+.edit-overlay:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.edit-icon {
+  font-size: 16px;
+}
+
+.hidden-input {
+  display: none;
+}
+
+/* // Deepseek response // */
+.user-basic-info {
+  text-align: center;
+  margin: 5px;
+}
+
+.user-basic-info h2 {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-basic-info p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.user-basic-info small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.section-title {
+  color: white;
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.editable-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.editable-field {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.editable-field label {
+  width: 120px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.edit-group, .view-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.editable-input {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.editable-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.readonly-text {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 1rem;
+}
+
+.edit-btn, .save-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.edit-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+}
+
+.save-btn {
+  background: rgba(46, 204, 113, 0.7);
+  color: white;
+}
+
+.save-btn:hover {
+  background: rgba(46, 204, 113, 0.9);
+}
+
+.editable-field:not(:has(.edit-group)) {
+  padding: 0.5rem 0;
+}
+
+.editable-field:not(:has(.edit-group)) .readonly-text {
+  border-bottom: none;
+  padding: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .editable-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .editable-field label {
+    width: 100%;
+  }
+  
+  .edit-group, .view-group {
+    width: 100%;
+  }
+}
+
+/*  // ChatGPT */
+/*  .user-basic-info {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #e0e0e0;
+}
+
+.user-basic-info h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.user-basic-info p {
+  font-size: 1rem;
+  color: #b0b0b0;
+  margin-bottom: 0.25rem;
+}
+
+.user-basic-info small {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.editable-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editable-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editable-field label {
+  font-size: 1rem;
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+.view-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  backdrop-filter: blur(8px);
+}
+
+.readonly-text {
+  color: #d0d0d0;
+}
+
+.edit-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.editable-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  outline: none;
+}
+
+.editable-input::placeholder {
+  color: #bbb;
+}
+
+.edit-btn,
+.save-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #00bfff;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.3s ease;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background: rgba(0, 191, 255, 0.2);
+}
+
+.sign-out-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .editable-form {
+    gap: 1rem;
+  }
+}
+
+
+ */
+
+ 

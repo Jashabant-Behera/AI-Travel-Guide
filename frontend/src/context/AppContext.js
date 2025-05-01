@@ -21,6 +21,7 @@ const AppContextProvider = (props) => {
           email: data.user.email,
           isVerified: data.user.isAccountVerified,
           savedItineraries: data.user.savedItineraries,
+          createdAt: data.user.createdAt,
         };
         setUserData(user);
         localStorage.setItem("user", JSON.stringify(user));

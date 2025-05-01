@@ -1,12 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "server.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js"
@@ -22,8 +22,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
     "nodemailer": "^6.10.0",
-    "nodemon": "^3.1.9",
+    "nodemon": "^3.1.10",
     "pdfkit": "^0.16.0",
     "stream-buffers": "^3.0.3"
-  }
+  },
+  "devDependencies": {}
 }
