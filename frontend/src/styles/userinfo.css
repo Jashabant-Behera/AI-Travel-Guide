@@ -157,7 +157,6 @@
   display: none;
 }
 
-/* // Deepseek response // */
 .user-basic-info {
   text-align: center;
   margin: 5px;
@@ -165,36 +164,36 @@
 
 .user-basic-info h2 {
   color: white;
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
+  font-size: 28px;
+  margin-bottom: 8px;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .user-basic-info p {
   color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  margin-bottom: 8px; 
+  font-size: 16px;
 }
 
 .user-basic-info small {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.85rem;
+  font-size: 13px;
 }
 
 .section-title {
   color: white;
-  font-size: 1.5rem;
-  margin: 2rem 0 1rem;
-  padding-bottom: 0.5rem;
+  font-size: 24px;
+  margin: 32px 0 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .editable-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  padding: 1.5rem;
+  gap: 10px;
+  padding: 25px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -203,33 +202,34 @@
 }
 
 .editable-field {
+  height:50px;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 10px;
 }
 
 .editable-field label {
   width: 120px;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgb(255, 255, 255);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .edit-group, .view-group {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 30px;
 }
 
 .editable-input {
   flex: 1;
-  padding: 0.8rem 1rem;
-  background: rgba(255, 255, 255, 0.15);
+  padding: 13px 30px;
+  background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 8px;
   color: white;
-  font-size: 1rem;
+  font-size: 16px;
   transition: all 0.3s ease;
 }
 
@@ -241,10 +241,51 @@
 
 .readonly-text {
   flex: 1;
-  padding: 0.8rem 1rem;
+  padding: 13px 16px;
   color: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 1rem;
+  font-size: 16px;
+}
+
+.gender-radio-group {
+  display: flex;
+  flex: 1;
+  padding: 16px 0;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.gender-radio {
+  margin-right: 8px;
+}
+
+.gender-radio-group label {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+.gender-radio-group input[type="radio"] {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.gender-radio-group input[type="radio"]:checked {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.gender-radio-group input[type="radio"]:focus {
+  outline: none;
 }
 
 .edit-btn, .save-btn {
@@ -279,145 +320,10 @@
 }
 
 .editable-field:not(:has(.edit-group)) {
-  padding: 0.5rem 0;
+  padding: 8px 0;
 }
 
 .editable-field:not(:has(.edit-group)) .readonly-text {
   border-bottom: none;
-  padding: 0.5rem 0;
+  padding: 8px 0;
 }
-
-@media (max-width: 768px) {
-  .editable-field {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .editable-field label {
-    width: 100%;
-  }
-  
-  .edit-group, .view-group {
-    width: 100%;
-  }
-}
-
-/*  // ChatGPT */
-/*  .user-basic-info {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #e0e0e0;
-}
-
-.user-basic-info h2 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.user-basic-info p {
-  font-size: 1rem;
-  color: #b0b0b0;
-  margin-bottom: 0.25rem;
-}
-
-.user-basic-info small {
-  font-size: 0.9rem;
-  color: #888;
-}
-
-.section-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 0.5rem;
-}
-
-.editable-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.editable-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.editable-field label {
-  font-size: 1rem;
-  color: #a0a0a0;
-  font-weight: 500;
-}
-
-.view-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
-  backdrop-filter: blur(8px);
-}
-
-.readonly-text {
-  color: #d0d0d0;
-}
-
-.edit-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.editable-input {
-  flex: 1;
-  padding: 0.6rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  outline: none;
-}
-
-.editable-input::placeholder {
-  color: #bbb;
-}
-
-.edit-btn,
-.save-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: none;
-  color: #00bfff;
-  padding: 0.5rem;
-  border-radius: 50%;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: background 0.3s ease;
-}
-
-.edit-btn:hover,
-.save-btn:hover {
-  background: rgba(0, 191, 255, 0.2);
-}
-
-.sign-out-container {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-@media (max-width: 600px) {
-  .editable-form {
-    gap: 1rem;
-  }
-}
-
-
- */
-
- 

@@ -31,7 +31,6 @@ const UserInfo = () => {
 
   const handleSave = (field) => {
     setEditMode({ ...editMode, [field]: false });
-    // Add logic to update backend if needed
   };
 
   const handleImageChange = (e, type) => {
@@ -51,7 +50,7 @@ const UserInfo = () => {
     <div className="user-info-container">
       <div className="banner-profile-container">
         <div className="banner-section">
-          <Image src={bannerImage} alt="Banner" fill className="banner-img" />
+          <Image src={bannerImage} alt="Banner" fill className="banner-img" priority />
           <div className="banner-corner-effect"></div>
           <div className="penoverlay" onClick={() => triggerFileInput(bannerInputRef)}>
             <FontAwesomeIcon icon={faPen} className="penicon" />
@@ -91,7 +90,7 @@ const UserInfo = () => {
         <h2>{formValues.name}</h2>
         <p>{userData.email}</p>
         <small>
-          {formValues.location || "Unknown Location"} || Joined {userData.createdAt || "N/A"}
+          {formValues.location || "Unknown Location"}
         </small>
       </div>
       <h3 className="section-title">User Information</h3>
@@ -101,13 +100,51 @@ const UserInfo = () => {
             <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
             {editMode[field] ? (
               <div className="edit-group">
-                <input
-                  type="text"
-                  name={field}
-                  value={formValues[field]}
-                  onChange={handleInputChange}
-                  className="editable-input"
-                />
+                {field === "gender" ? (
+                  <div className="gender-radio-group">
+                    <label>
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="Male"
+                        checked={formValues.gender === "Male"}
+                        onChange={handleInputChange}
+                        className="gender-radio"
+                      />
+                      Male
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="Female"
+                        checked={formValues.gender === "Female"}
+                        onChange={handleInputChange}
+                        className="gender-radio"
+                      />
+                      Female
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="gender"
+                        value="Others"
+                        checked={formValues.gender === "Others"}
+                        onChange={handleInputChange}
+                        className="gender-radio"
+                      />
+                      Others
+                    </label>
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    name={field}
+                    value={formValues[field]}
+                    onChange={handleInputChange}
+                    className="editable-input"
+                  />
+                )}
                 <button onClick={() => handleSave(field)} className="save-btn">
                   <FontAwesomeIcon icon={faCheck} />
                 </button>
@@ -129,10 +166,6 @@ const UserInfo = () => {
         <div className="editable-field">
           <label>Email</label>
           <span className="readonly-text">{userData.email}</span>
-        </div>
-        <div className="editable-field">
-          <label>Join Date</label>
-          <span className="readonly-text">{userData.createdAt || "N/A"}</span>
         </div>
       </div>
     </div>

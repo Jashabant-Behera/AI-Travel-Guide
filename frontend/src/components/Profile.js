@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useContext, useState, useEffect } from "react";
-
 import "../styles/Profile.css";
+
 import ResetPassword from "./ResetPassword";
 import EmailVerify from "./VerifyEmail";
 import Recommendations from "./Recommendations";
@@ -14,21 +14,23 @@ import { toast } from "react-toastify";
 import api from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHome,
+  faHouse,
   faUser,
   faSuitcaseRolling,
-  faGear,
+  faMapLocationDot,
+  faRobot,
+  faKey,
+  faCheckCircle,
   faRightFromBracket,
   faBars,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-
 const Profile = () => {
   const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
   const router = useRouter();
 
-  const [section, setSection] = useState("User info");
+  const [section, setSection] = useState("Account");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showVerifyForm, setShowVerifyForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -76,28 +78,31 @@ const Profile = () => {
     }
 
     switch (section) {
-      case "User info":
+      case "Your Account":
         return (
           <div className="content">
             <UserInfo />
           </div>
         );
-
       case "Your Itinerary":
         return (
           <div className="content">
             <SavedItineraries />
           </div>
         );
-
-      case "Trip Suggestions":
+      case "Your Locations":
+        return (
+          <div className="content">
+            <p>Locations content goes here.</p>
+          </div>
+        );
+      case "AI Recommendations":
         return (
           <div className="content">
             <Recommendations />
           </div>
         );
-
-      case "Settings":
+      case "Password":
         return (
           <div className="content security-section">
             <button
@@ -107,29 +112,37 @@ const Profile = () => {
                 setShowPasswordForm(!showPasswordForm);
               }}
             >
-              {showPasswordForm ? "Cancel Password Change" : "Change Password"}
+              Change Password
             </button>
             {showPasswordForm && <ResetPassword />}
-
+          </div>
+        );
+      case "Verify Email":
+        return (
+          <div className="content security-section">
             {userData?.isVerified ? (
               <p>Your account is already verified.</p>
             ) : (
-              <button
-                onClick={() => {
-                  verifyOTP();
-                  setShowVerifyForm(!showVerifyForm);
-                }}
-              >
-                {showVerifyForm ? "Cancel Email Verification" : "Verify Email"}
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    verifyOTP();
+                    setShowVerifyForm(!showVerifyForm);
+                  }}
+                >
+                  Verify Email
+                </button>
+                {showVerifyForm && <EmailVerify />}
+              </>
             )}
-
-            {showVerifyForm && !userData?.isAccountVerified && <EmailVerify />}
           </div>
         );
-
       default:
-        return null;
+        return (
+          <div className="content">
+            <UserInfo />
+          </div>
+        );
     }
   };
 
@@ -153,27 +166,39 @@ const Profile = () => {
       </div>
 
       <div className={`navigation ${menuOpen ? "responsive" : ""}`}>
-        <ul>
-          {["User info", "Your Itinerary", "Trip Suggestions", "Settings"].map((item, index) => {
-            const iconMap = [faHome, faUser, faSuitcaseRolling, faGear];
+        <div className="home-nav" onClick={() => router.push("/")}>
+          <a>
+            <span className="icon">
+              <FontAwesomeIcon icon={faHouse} />
+            </span>
+            <span className="title">Home</span>
+          </a>
+        </div>
 
-            return (
-              <li
-                key={item}
-                className={`list ${section === item ? "active" : ""}`}
-                onClick={() => setSection(item)}
-              >
-                <b></b>
-                <b></b>
-                <a>
-                  <span className="icon">
-                    <FontAwesomeIcon icon={iconMap[index]} />
-                  </span>
-                  <span className="title">{item}</span>
-                </a>
-              </li>
-            );
-          })}
+        <ul>
+          {[
+            { label: "Your Account", icon: faUser },
+            { label: "Your Itinerary", icon: faSuitcaseRolling },
+            { label: "Your Locations", icon: faMapLocationDot },
+            { label: "AI Recommendations", icon: faRobot },
+            { label: "Password", icon: faKey },
+            { label: "Verify Email", icon: faCheckCircle },
+          ].map(({ label, icon }) => (
+            <li
+              key={label}
+              className={`list ${section === label ? "active" : ""}`}
+              onClick={() => setSection(label)}
+            >
+              <b></b>
+              <b></b>
+              <a>
+                <span className="icon">
+                  <FontAwesomeIcon icon={icon} />
+                </span>
+                <span className="title">{label}</span>
+              </a>
+            </li>
+          ))}
         </ul>
 
         <div className="sign-out-container">
@@ -187,6 +212,8 @@ const Profile = () => {
           </li>
         </div>
       </div>
+
+      <div className={`content-overlay ${menuOpen ? "active" : ""}`} onClick={toggleMenu}></div>
 
       {renderSection()}
     </div>

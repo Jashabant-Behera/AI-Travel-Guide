@@ -58,6 +58,7 @@
 
 .feature-badge {
   position: absolute;
+  top: -30px;
   background-color: #ff5722;
   color: white;
   padding: 4px 10px;
