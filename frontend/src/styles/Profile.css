@@ -190,27 +190,6 @@
   overflow-x: auto;
 }
 
-.security-section {
-  display: flex;
-  flex-direction: column;
-}
-
-.security-section button {
-  padding: 10px 20px;
-  width: 25vw;
-  background-color: #306eff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-right: 10px;
-  margin-bottom: 20px;
-}
-
-.security-section button:hover {
-  opacity: 0.9;
-}
-
 .sign-out-container {
   position: absolute;
   bottom: 50px;

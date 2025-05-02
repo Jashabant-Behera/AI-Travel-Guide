@@ -4,7 +4,11 @@ import React, { useContext, useState, useRef } from "react";
 import { AppContext } from "../context/AppContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faCheck, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import ResetPassword from "./ResetPassword";
+import EmailVerify from "./VerifyEmail";
+import { toast } from "react-toastify";
+import api from "../utils/api";
 
 const UserInfo = () => {
   const { userData } = useContext(AppContext);
@@ -13,12 +17,13 @@ const UserInfo = () => {
     gender: false,
     location: false,
   });
-
   const [formValues, setFormValues] = useState({
     name: userData.name,
     gender: userData.gender || "",
-    location: userData.location || "",
+    location: userData.userLocation || "",
   });
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showVerifyForm, setShowVerifyForm] = useState(false);
 
   const [bannerImage, setBannerImage] = useState("/banner.jpg");
   const [profileImage, setProfileImage] = useState("/avatar.png");
@@ -44,6 +49,19 @@ const UserInfo = () => {
 
   const triggerFileInput = (ref) => {
     ref.current.click();
+  };
+
+  const verifyOTP = async () => {
+    try {
+      const { data } = await api.post(`/api/auth/verifyOTP`);
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -89,83 +107,132 @@ const UserInfo = () => {
       <div className="user-basic-info">
         <h2>{formValues.name}</h2>
         <p>{userData.email}</p>
-        <small>
-          {formValues.location || "Unknown Location"}
-        </small>
+        <small>{formValues.location || "Unknown Location"}</small>
       </div>
-      <h3 className="section-title">User Information</h3>
-      <div className="editable-form">
-        {["name", "gender", "location"].map((field) => (
-          <div className="editable-field" key={field}>
-            <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-            {editMode[field] ? (
-              <div className="edit-group">
-                {field === "gender" ? (
-                  <div className="gender-radio-group">
-                    <label>
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="Male"
-                        checked={formValues.gender === "Male"}
-                        onChange={handleInputChange}
-                        className="gender-radio"
-                      />
-                      Male
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="Female"
-                        checked={formValues.gender === "Female"}
-                        onChange={handleInputChange}
-                        className="gender-radio"
-                      />
-                      Female
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="gender"
-                        value="Others"
-                        checked={formValues.gender === "Others"}
-                        onChange={handleInputChange}
-                        className="gender-radio"
-                      />
-                      Others
-                    </label>
-                  </div>
-                ) : (
-                  <input
-                    type="text"
-                    name={field}
-                    value={formValues[field]}
-                    onChange={handleInputChange}
-                    className="editable-input"
-                  />
-                )}
-                <button onClick={() => handleSave(field)} className="save-btn">
-                  <FontAwesomeIcon icon={faCheck} />
-                </button>
-              </div>
+
+      <div className="profile-info-section">
+        <h3 className="section-title">
+          <FontAwesomeIcon icon={faUser} /> Profile Info
+        </h3>
+        <div className="editable-form">
+          {["name", "gender", "location"].map((field) => (
+            <div className="editable-field" key={field}>
+              <label>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+              {editMode[field] ? (
+                <div className="edit-group">
+                  {field === "gender" ? (
+                    <div className="gender-radio-group">
+                      <label>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="Male"
+                          checked={formValues.gender === "Male"}
+                          onChange={handleInputChange}
+                          className="gender-radio"
+                        />
+                        Male
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="Female"
+                          checked={formValues.gender === "Female"}
+                          onChange={handleInputChange}
+                          className="gender-radio"
+                        />
+                        Female
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="Others"
+                          checked={formValues.gender === "Others"}
+                          onChange={handleInputChange}
+                          className="gender-radio"
+                        />
+                        Others
+                      </label>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      name={field}
+                      value={formValues[field]}
+                      onChange={handleInputChange}
+                      className="editable-input"
+                    />
+                  )}
+                  <button onClick={() => handleSave(field)} className="save-btn">
+                    <FontAwesomeIcon icon={faCheck} />
+                  </button>
+                </div>
+              ) : (
+                <div className="view-group">
+                  <span className="readonly-text">{formValues[field] || "Not specified"}</span>
+                  <button
+                    className="edit-btn"
+                    onClick={() => setEditMode({ ...editMode, [field]: true })}
+                  >
+                    <FontAwesomeIcon icon={faPen} />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="editable-field">
+            <label>Email</label>
+            <span className="readonly-text">{userData.email}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 className="section-title">
+          <FontAwesomeIcon icon={faShieldAlt} /> Security
+        </h3>
+        <div className="security-section">
+          <div className="security-option">
+            <h3>🔒 Need a Fresh Password?</h3>
+            <p>
+              Feeling like your password’s been around since dial-up? Time to upgrade your digital
+              fortress.
+            </p>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowPasswordForm(!showPasswordForm);
+              }}
+              className="security-btn"
+            >
+              {showPasswordForm ? "Cancel" : "Change Password"}
+            </button>
+            {showPasswordForm && <ResetPassword />}
+          </div>
+
+          <div className="security-option">
+            <h3>📧 Email Verification</h3>
+            {userData?.isVerified ? (
+              <p>Your email is verified and good to go. ✅</p>
             ) : (
-              <div className="view-group">
-                <span className="readonly-text">{formValues[field] || "Not specified"}</span>
+              <>
+                <p>Let’s lock in your email and make things official.</p>
                 <button
-                  className="edit-btn"
-                  onClick={() => setEditMode({ ...editMode, [field]: true })}
+                  onClick={() => {
+                    verifyOTP();
+                    setShowVerifyForm(!showVerifyForm);
+                  }}
+                  className="security-btn"
                 >
-                  <FontAwesomeIcon icon={faPen} />
+                  Verify Email
                 </button>
-              </div>
+                {showVerifyForm && <EmailVerify />}
+              </>
             )}
           </div>
-        ))}
-
-        <div className="editable-field">
-          <label>Email</label>
-          <span className="readonly-text">{userData.email}</span>
         </div>
       </div>
     </div>

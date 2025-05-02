@@ -56,7 +56,7 @@ const AuthForm = () => {
         }
 
         const safeUserData = {
-          id: data.user._id,
+          id: data.user.id,
           name: data.user.name,
           email: data.user.email,
           isVerified: data.user.isAccountVerified,
@@ -64,6 +64,7 @@ const AuthForm = () => {
         localStorage.setItem("user", JSON.stringify(safeUserData));
 
         console.log("token:", data.token);
+        console.log("user Data", safeUserData)
 
         setIsLoggedin(true);
         setUserData(safeUserData);

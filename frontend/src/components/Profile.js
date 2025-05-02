@@ -3,8 +3,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../styles/Profile.css";
 
-import ResetPassword from "./ResetPassword";
-import EmailVerify from "./VerifyEmail";
 import Recommendations from "./Recommendations";
 import SavedItineraries from "./SavedItineraries";
 import UserInfo from "./UserInfo";
@@ -19,8 +17,6 @@ import {
   faSuitcaseRolling,
   faMapLocationDot,
   faRobot,
-  faKey,
-  faCheckCircle,
   faRightFromBracket,
   faBars,
   faXmark,
@@ -30,9 +26,7 @@ const Profile = () => {
   const { userData, setUserData, setIsLoggedin } = useContext(AppContext);
   const router = useRouter();
 
-  const [section, setSection] = useState("Account");
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [showVerifyForm, setShowVerifyForm] = useState(false);
+  const [section, setSection] = useState("Your Account");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -48,19 +42,6 @@ const Profile = () => {
       }
     } catch (error) {
       toast.error(error.message || "Logout failed");
-    }
-  };
-
-  const verifyOTP = async () => {
-    try {
-      const { data } = await api.post(`/api/auth/verifyOTP`);
-      if (data.success) {
-        toast.success(data.message);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
     }
   };
 
@@ -100,41 +81,6 @@ const Profile = () => {
         return (
           <div className="content">
             <Recommendations />
-          </div>
-        );
-      case "Password":
-        return (
-          <div className="content security-section">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowPasswordForm(!showPasswordForm);
-              }}
-            >
-              Change Password
-            </button>
-            {showPasswordForm && <ResetPassword />}
-          </div>
-        );
-      case "Verify Email":
-        return (
-          <div className="content security-section">
-            {userData?.isVerified ? (
-              <p>Your account is already verified.</p>
-            ) : (
-              <>
-                <button
-                  onClick={() => {
-                    verifyOTP();
-                    setShowVerifyForm(!showVerifyForm);
-                  }}
-                >
-                  Verify Email
-                </button>
-                {showVerifyForm && <EmailVerify />}
-              </>
-            )}
           </div>
         );
       default:
@@ -181,8 +127,6 @@ const Profile = () => {
             { label: "Your Itinerary", icon: faSuitcaseRolling },
             { label: "Your Locations", icon: faMapLocationDot },
             { label: "AI Recommendations", icon: faRobot },
-            { label: "Password", icon: faKey },
-            { label: "Verify Email", icon: faCheckCircle },
           ].map(({ label, icon }) => (
             <li
               key={label}

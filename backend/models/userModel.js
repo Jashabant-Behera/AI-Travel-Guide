@@ -12,6 +12,7 @@ const userSchema = new Schema({
   isAccountVerified: { type: Boolean, default: false },
   resetOTP: { type: String, default: "" },
   resetOTPExpireAt: { type: Number, default: 0 },
+  userLocation: { type: String, default: "" },
 });
 
 export default model("userModel", userSchema);
