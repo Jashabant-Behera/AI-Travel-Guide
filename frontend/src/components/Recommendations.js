@@ -22,7 +22,7 @@ const Recommendations = ({ user }) => {
         if (!token || !user?._id) return;
 
         setFetchingSaved(true);
-        const response = await fetch(`/api/recommendations/user/${user._id}`, {
+        const response = await api.post(`/api/recommendations/user/${user._id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

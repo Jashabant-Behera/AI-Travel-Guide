@@ -205,12 +205,12 @@
   border-radius: 20px;
   transition: background-color 0.3s ease;
   cursor: pointer;
-  background-color: rgba(255, 0, 0, 0.5);
+  background-color: rgba(255, 86, 34, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .sign-out-container .sign-out:hover {
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 86, 34);
 }
 
 .sign-out-container .sign-out a {

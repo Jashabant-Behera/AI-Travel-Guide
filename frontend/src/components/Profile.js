@@ -2,7 +2,6 @@
 
 import React, { useContext, useState, useEffect } from "react";
 import "../styles/Profile.css";
-
 import Recommendations from "./Recommendations";
 import SavedItineraries from "./SavedItineraries";
 import UserInfo from "./UserInfo";
@@ -117,7 +116,7 @@ const Profile = () => {
             <span className="icon">
               <FontAwesomeIcon icon={faHouse} />
             </span>
-            <span className="title">Home</span>
+            <span className="title">Back to Home</span>
           </a>
         </div>
 
