@@ -68,26 +68,26 @@
   background-color: #ffffff;
 }
 
-.navigation ul li.active b:nth-child(1) {
+.navigation ul li.active b:nth-child(1),
+.navigation ul li.active b:nth-child(2) {
   position: absolute;
-  top: -20px;
-  right: 0;
   width: 20px;
   height: 20px;
   background-color: transparent;
-  box-shadow: 5px 6px #ffffff;
+}
+
+.navigation ul li.active b:nth-child(1) {
+  top: -20px;
+  right: 0;
   border-radius: 0 0 10px 0;
+  box-shadow: 5px 6px #ffffff;
 }
 
 .navigation ul li.active b:nth-child(2) {
-  position: absolute;
   bottom: -20px;
   right: 0;
-  width: 20px;
-  height: 20px;
-  background-color: transparent;
-  box-shadow: 5px -6px #ffffff;
   border-radius: 0 10px 0 0;
+  box-shadow: 5px -6px #ffffff;
 }
 
 .navigation ul li.active a {
@@ -153,8 +153,6 @@
   font-size: 1.5em;
 }
 
-
-
 .sign-out-container {
   position: absolute;
   bottom: 50px;
@@ -177,7 +175,6 @@
 .sign-out-container .sign-out:hover {
   background-color: rgba(255, 86, 34, 0.9);
 }
-
 
 .sign-out-container .sign-out a {
   position: relative;
@@ -211,8 +208,8 @@
   position: absolute;
   top: 20px;
   bottom: 20px;
-  right: 50px;
-  width: 1210px;
+  right: 20px;
+  width: 1240px;
   padding: 20px;
   border-radius: 20px;
   transition: all 0.3s ease;

@@ -24,7 +24,7 @@ const UserInfo = () => {
   });
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showVerifyForm, setShowVerifyForm] = useState(false);
-
+  const [resendTimer, setResendTimer] = useState(0);
   const [bannerImage, setBannerImage] = useState("/banner.jpg");
   const [profileImage, setProfileImage] = useState("/avatar.png");
   const bannerInputRef = useRef(null);
@@ -51,11 +51,25 @@ const UserInfo = () => {
     ref.current.click();
   };
 
+  const startResendTimer = () => {
+    setResendTimer(30);
+    const timerInterval = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const verifyOTP = async () => {
     try {
       const { data } = await api.post(`/api/auth/verifyOTP`);
       if (data.success) {
         toast.success(data.message);
+        startResendTimer();
       } else {
         toast.error(data.message);
       }
@@ -107,7 +121,7 @@ const UserInfo = () => {
       <div className="user-basic-info">
         <h2>{formValues.name}</h2>
         <p>{userData.email}</p>
-        <small>{formValues.location || "Unknown Location"}</small>
+        <small>➤ {formValues.location || "Unknown Location"}</small>
       </div>
 
       <div className="profile-info-section">
@@ -195,41 +209,71 @@ const UserInfo = () => {
         </h3>
         <div className="security-section">
           <div className="security-option">
-            <h3>🔒 Need a Fresh Password?</h3>
+            <h3>Need a Fresh Password?</h3>
             <p>
               Feeling like your password’s been around since dial-up? Time to upgrade your digital
               fortress.
             </p>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowPasswordForm(!showPasswordForm);
-              }}
-              className="security-btn"
-            >
-              {showPasswordForm ? "Cancel" : "Change Password"}
-            </button>
             {showPasswordForm && <ResetPassword />}
+            {!showPasswordForm ? (
+              <button onClick={() => setShowPasswordForm(true)} className="security-btn">
+                Change Password
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => setShowPasswordForm(false)}
+                  className="security-btn cancel-btn"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
 
           <div className="security-option">
-            <h3>📧 Email Verification</h3>
+            <h3>Email Verification</h3>
             {userData?.isVerified ? (
-              <p>Your email is verified and good to go. ✅</p>
+              <p>Your email is verified and good to go.</p>
             ) : (
               <>
-                <p>Let’s lock in your email and make things official.</p>
-                <button
-                  onClick={() => {
-                    verifyOTP();
-                    setShowVerifyForm(!showVerifyForm);
-                  }}
-                  className="security-btn"
-                >
-                  Verify Email
-                </button>
-                {showVerifyForm && <EmailVerify />}
+                <p>Let's lock in your email and make things official.</p>
+                <div className="security-btn-container">
+                  {showVerifyForm && <EmailVerify />}
+                  {!showVerifyForm ? (
+                    <button
+                      onClick={() => {
+                        verifyOTP();
+                        setShowVerifyForm(true);
+                      }}
+                      className={`security-btn ${resendTimer > 0 ? "disabled" : ""}`}
+                      disabled={resendTimer > 0}
+                    >
+                      Verify Email
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          verifyOTP();
+                          startResendTimer();
+                        }}
+                        className={`verify-btn ${resendTimer > 0 ? "disabled" : ""}`}
+                        disabled={resendTimer > 0}
+                      >
+                        {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowVerifyForm(false);
+                        }}
+                        className="cancel-btn"
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
