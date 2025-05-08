@@ -215,20 +215,19 @@ const UserInfo = () => {
               fortress.
             </p>
             {showPasswordForm && <ResetPassword />}
-            {!showPasswordForm ? (
-              <button onClick={() => setShowPasswordForm(true)} className="security-btn">
-                Change Password
-              </button>
-            ) : (
-              <>
-                <button
-                  onClick={() => setShowPasswordForm(false)}
-                  className="security-btn cancel-btn"
-                >
-                  Cancel
+            <div className="security-btn-container">
+              {!showPasswordForm ? (
+                <button onClick={() => setShowPasswordForm(true)} className="security-btn">
+                  Change Password
                 </button>
-              </>
-            )}
+              ) : (
+                <>
+                  <button onClick={() => setShowPasswordForm(false)} className="cancel-btn">
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           <div className="security-option">
@@ -238,8 +237,8 @@ const UserInfo = () => {
             ) : (
               <>
                 <p>Let's lock in your email and make things official.</p>
+                {showVerifyForm && <EmailVerify />}
                 <div className="security-btn-container">
-                  {showVerifyForm && <EmailVerify />}
                   {!showVerifyForm ? (
                     <button
                       onClick={() => {
