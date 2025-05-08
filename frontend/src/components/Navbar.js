@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import "../styles/navbar.css";
 import api from "@/utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faRightFromBracket, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const router = useRouter();

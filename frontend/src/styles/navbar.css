@@ -8,9 +8,12 @@
   align-items: center;
   justify-content: center;
   transition: all 0.5s ease;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: transparent;
 }
 
-image{
+image {
   height: 50px;
   width: 50px;
 }
@@ -24,7 +27,7 @@ image{
 }
 
 .navlogo {
-  font-size: 1.8rem;
+  font-size: 29px;
   font-weight: bold;
   text-decoration: none;
   display: flex;
@@ -42,7 +45,7 @@ image{
 
 .nav-link {
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 500;
   padding: 10px 15px;
   color: rgb(0, 0, 0);
@@ -150,7 +153,6 @@ image{
   font-weight: 500;
 }
 
-
 .login-btn:hover {
   background-color: #005bb5;
 }
@@ -162,14 +164,13 @@ image{
   width: 100%;
 }
 
-
 .hamburger {
   display: none;
   background: none;
   border: none;
   padding: 0;
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 24px;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -179,12 +180,14 @@ image{
   .navContainer {
     flex-direction: column;
     align-items: flex-start;
-    padding: 1rem;
+    margin-left: 30px;
+    margin-right: 30px;
+    transition: all 0.5s ease;
   }
 
   .link {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 4px;
     width: 100%;
     margin: 1rem 0;
     display: none;
@@ -196,7 +199,7 @@ image{
   }
 
   .nav-link {
-    padding: 0.5rem 0;
+    padding: 8px 0;
   }
 
   .nav-link:hover {
@@ -212,14 +215,14 @@ image{
   .hamburger {
     display: block;
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: 0;
+    top: 0;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 24px;
   }
 
   .navContainer > .nav-link {
     margin-left: auto;
-    margin-right: 3rem;
+    margin-right: 48px;
   }
 }
