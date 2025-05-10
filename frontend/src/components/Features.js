@@ -5,7 +5,6 @@ import "../styles/features.css";
 const Features = () => {
   return (
     <section id="features" className="features-section">
-      <h2 className="features-heading">Key Features</h2>
 
       <div className="features-grid">
         <div className="feature-card">

@@ -20,7 +20,7 @@ const About = () => {
           About Us
         </h2>
         <p className="about-description">
-          Welcome to <strong>AI Travel Guide</strong> — your smart companion for discovering hidden
+          Welcome to <strong>AI Travel Buddy</strong> — your smart companion for discovering hidden
           gems, cultural experiences, and planning personalized itineraries around the world.
         </p>
         <p className="about-subtext">
