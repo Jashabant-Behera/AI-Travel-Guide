@@ -89,7 +89,7 @@ const AuthForm = () => {
             alt="Logo"
             width={40}
             height={40}
-            className="cursor-pointer"
+            className="logo"
           />
         </div>
 

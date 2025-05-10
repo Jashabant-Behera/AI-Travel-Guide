@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { AppContext } from "@/context/AppContext";
@@ -11,8 +11,36 @@ import "../styles/verifyEmail.css";
 const EmailVerify = () => {
   const router = useRouter();
   const { isLoggedin, userData, getUserData } = useContext(AppContext);
+  const [resendTimer, setResendTimer] = useState(0);
 
   const inputRefs = useRef([]);
+
+  const startResendTimer = () => {
+    setResendTimer(30);
+    const timerInterval = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const verifyOTP = async () => {
+    try {
+      const { data } = await api.post(`/api/auth/verifyOTP`);
+      if (data.success) {
+        toast.success(data.message);
+        startResendTimer();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -39,7 +67,7 @@ const EmailVerify = () => {
       toast.error(error?.response?.data?.message || "Something went wrong.");
     }
   };
-  
+
   const handleInput = (e, index) => {
     if (e.target.value.length > 0 && index < inputRefs.current.length - 1) {
       inputRefs.current[index + 1].focus();
@@ -117,6 +145,16 @@ const EmailVerify = () => {
 
           <button type="submit" className="verify-button">
             Verify Email
+          </button>
+          <button
+            onClick={() => {
+              verifyOTP();
+              startResendTimer();
+            }}
+            className={`verify-button ${resendTimer > 0 ? "disabled" : ""}`}
+            disabled={resendTimer > 0}
+          >
+            {resendTimer > 0 ? `Resend in ${resendTimer}s` : "Resend Code"}
           </button>
         </form>
       </div>

@@ -7,7 +7,7 @@ const Header = () => {
       <h1>EXPLORE YOUR DESTINATION</h1>
       <form className="search-bar">
         <input type="text" placeholder="Search locations..." />
-        <button type="submit">Search</button>
+        <button type="submit" disabled>Search</button>
       </form>
     </header>
   );
