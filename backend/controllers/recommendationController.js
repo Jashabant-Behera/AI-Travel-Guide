@@ -47,7 +47,7 @@ const getUserRecommendations = async (req, res) => {
     const recommendations = await Recommendation.find({
       userId,
       category: "AI Generated",
-    }).sort({ _id: -1 }); // newest first
+    }).sort({ _id: -1 });
 
     res.status(200).json({ recommendations });
   } catch (err) {
