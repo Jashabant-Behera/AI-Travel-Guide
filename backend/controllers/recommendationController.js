@@ -4,21 +4,16 @@ import aiService from "../services/aiService.js";
 const createAIRecommendation = async (req, res) => {
   try {
     const { location, preferences } = req.body;
+    const userId = req.userId;
 
-    if (
-      !location || 
-      !preferences || 
-      preferences.length === 0
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Location and preferences are required." });
+    if (!location || !preferences || preferences.length === 0) {
+      return res.status(400).json({ error: "Location and preferences are required." });
     }
 
     const aiGeneratedText = await aiService.getRecommendations(location, preferences);
 
     const recommendation = new Recommendation({
-      userId: req.body.userId,
+      userId,
       category: "AI Generated",
       location,
       name: "AI Suggested Places",
@@ -42,10 +37,9 @@ const createAIRecommendation = async (req, res) => {
 };
 
 const getUserRecommendations = async (req, res) => {
-  const { userId } = req.body.userId;
-
   try {
-    // Optional: check token matches userId
+    const userId = req.userId;
+
     if (req.user.id !== userId) {
       return res.status(403).json({ error: "Unauthorized access" });
     }
@@ -62,4 +56,4 @@ const getUserRecommendations = async (req, res) => {
   }
 };
 
-export {createAIRecommendation, getUserRecommendations};
+export { createAIRecommendation, getUserRecommendations };

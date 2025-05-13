@@ -4,6 +4,6 @@ import verifyToken from "../middleware/authMiddleware.js";
 import { createAIRecommendation, getUserRecommendations } from "../controllers/recommendationController.js";
 
 router.post("/ai", verifyToken, createAIRecommendation);
-router.get("/user/:userId", verifyToken, getUserRecommendations);
+router.get("/user", verifyToken, getUserRecommendations);
 
 export default router;

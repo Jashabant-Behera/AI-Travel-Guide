@@ -8,9 +8,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const getRecommendations = async (location, preferences) => {
   try {
-    const prompt = `Act as a travel guide and provide recommendations in short & bullet points for ${location} based on the following preferences: ${preferences.join(
-      ", "
-    )}. Include local food, cultural sites, and hidden places.`;
+    const prompt = `Act as a travel guide and provide recommendations in short & bullet points for ${location} based on the following preferences: ${preferences}. Include local food, cultural sites, and hidden places.`;
 
     const result = await model.generateContent(prompt);
     return result.response.text();
