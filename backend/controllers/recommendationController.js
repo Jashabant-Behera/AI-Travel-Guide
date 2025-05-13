@@ -56,4 +56,27 @@ const getUserRecommendations = async (req, res) => {
   }
 };
 
-export { createAIRecommendation, getUserRecommendations };
+const deleteRecommendation = async (req, res) => {
+  try {
+    const recommendationId = req.params.id;
+    const userId = req.userId;
+
+    const recommendation = await Recommendation.findOne({
+      _id: recommendationId,
+      userId,
+    });
+
+    if (!recommendation) {
+      return res.status(404).json({ error: "Recommendation not found or unauthorized access." });
+    }
+
+    await Recommendation.deleteOne({ _id: recommendationId });
+
+    res.status(200).json({ message: "Recommendation deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting recommendation:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export { createAIRecommendation, getUserRecommendations, deleteRecommendation };

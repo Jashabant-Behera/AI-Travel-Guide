@@ -16,7 +16,7 @@ const Recommendations = ({ user }) => {
   const [fetchingSaved, setFetchingSaved] = useState(false);
 
   useEffect(() => {
-    const fetchSavedRecommendations = async () => {
+    const getRecommendations = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token || !user?._id) return;
@@ -39,7 +39,7 @@ const Recommendations = ({ user }) => {
       }
     };
 
-    fetchSavedRecommendations();
+    getRecommendations();
   }, [user]);
 
   const handleGenerate = async () => {
