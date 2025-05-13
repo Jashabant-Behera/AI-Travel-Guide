@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "../styles/about.css";
+import Image from "next/image";
 
 const About = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -15,6 +16,7 @@ const About = () => {
       className={`about-section ${isVisible ? "fade-in" : ""}`}
       aria-labelledby="about-heading"
     >
+      <Image className="image" src={"/background8.jpg"} alt="image" width={500} height={500} />
       <article className="about-container">
         <h2 id="about-heading" className="about-heading">
           About Us

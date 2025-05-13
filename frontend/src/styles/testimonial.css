@@ -1,7 +1,10 @@
 .test {
-  background-color: #f8f9fa;
-  margin: 20px;
-  border-radius: 10px;
+  position: relative;
+  padding: 50px 20px;
+  background-image: url("/background2.jpg");
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
 .testimonials-section {
@@ -15,14 +18,32 @@
 
 .testimonials-heading {
   text-align: center;
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 40px;
-  color: #333;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonials-heading h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  position: relative;
+  display: inline-block;
+}
+
+.testimonials-heading h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
 }
 
 .testimonial {
-  background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -31,6 +52,10 @@
   overflow: hidden;
   width: 300px;
   max-width: 100%;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .testimonial-img {
@@ -45,12 +70,11 @@
 }
 
 .testimonial-content {
-  /* margin-top: 40px; */
   padding: 10px;
 }
 
 .user-name {
-  font-size: 1.3rem;
+  font-size: 25px;
   font-weight: bold;
   color: #007bff;
   margin-top: 10px;
@@ -58,7 +82,7 @@
 
 .user-feedback {
   font-size: 1rem;
-  color: #555;
+  color: #ffffff;
   margin: 10px;
   font-style: italic;
 }
@@ -69,11 +93,17 @@
   margin-top: 10px;
 }
 
-/* Mobile Responsive Styles */
 @media (max-width: 768px) {
   .test {
     margin: 15px;
     border-radius: 8px;
+    background-image: url("/background15.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .testimonials-section {
@@ -115,10 +145,9 @@
   }
 }
 
-/* Small Mobile Devices */
 @media (max-width: 480px) {
   .test {
-    margin: 10px;
+    margin: 0;
   }
 
   .testimonials-heading {
@@ -131,12 +160,14 @@
   }
 
   .testimonial-img {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
+    margin: 0;
   }
 
   .user-name {
-    font-size: 1.1rem;
+    font-size: 25px;
+    margin: 0;
   }
 
   .user-feedback {

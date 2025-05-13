@@ -4,7 +4,7 @@ import "../styles/faq.css";
 
 const FAQ = () => {
   return (
-    <section className="faq">
+    <section id="faqs" className="faq">
       <div >
         <h2 className="faq-heading" >
           Have Questions? Here Are Quick Answers To Some Of The Most Common Queries{" "}

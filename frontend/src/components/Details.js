@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import "../styles/details.css";
+import Image from "next/image";
 
 const Details = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +26,8 @@ const Details = () => {
           and smart mapping to make travel planning easy, efficient, and exciting.
         </p>
       </article>
+
+      <Image className="image" src={"/background1.jpg"} alt="image" width={500} height={500} />
     </section>
   );
 };

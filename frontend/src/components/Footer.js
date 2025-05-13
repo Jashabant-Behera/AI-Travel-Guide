@@ -1,89 +1,143 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { FaFacebookF, FaGithub, FaTwitter, FaInstagram, FaEnvelope, FaPhone } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaGithub,
+  FaTwitter,
+  FaInstagram,
+  FaEnvelope,
+  FaPhone,
+  FaPaperPlane, FaMapMarker, FaLinkedin
+} from "react-icons/fa";
 import "../styles/footer.css";
 
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="logo-box">
-        <div >
-          <Link href="/">
-            <img src="/logo.png" alt="Logo" className="footerlogo" />
+      <div className="footer-content">
+        <div className="footer-brand">
+          <Link href="/" className="footer-logo-link">
+            <img src="/logo.png" alt="AI Travel Buddy" className="footer-logo" />
           </Link>
-          <p className="tagline">Your AI Travel Guide</p>
+          <p className="footer-tagline">Your AI-Powered Travel Companion</p>
+
+          <div className="footer-newsletter">
+            <h3 className="newsletter-title">Get Travel Insights</h3>
+            <form className="newsletter-form">
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="newsletter-input"
+                required
+              />
+              <button type="submit" className="newsletter-button">
+                <FaPaperPlane className="icon" /> Subscribe
+              </button>
+            </form>
+          </div>
         </div>
-        <div>
-          <h3 className="title">Subscribe More Info</h3>
-          <div className="subscribe-box">
-            <input type="email" placeholder="Enter your Email" />
-            <button>Subscribe</button>
+
+        <div className="footer-links-grid">
+
+          <div className="footer-links-group">
+            <h3 className="links-group-title">Explore</h3>
+            <ul className="footer-links-list">
+              <li>
+                <Link href="#features">Features</Link>
+              </li>
+              <li>
+                <Link href="#testimonials">Testimonials</Link>
+              </li>
+              <li>
+                <Link href="#docs">How It Works</Link>
+              </li>
+              <li>
+                <Link href="#faqs">FAQs</Link>
+              </li>
+            </ul>
+          </div>
+
+
+          <div className="footer-links-group">
+            <h3 className="links-group-title">Company</h3>
+            <ul className="footer-links-list">
+              <li>
+                <Link href="#about">About Us</Link>
+              </li>
+              <li>
+                <Link href="#contact">Contact</Link>
+              </li>
+              <li>
+                <Link href="#careers">Careers</Link>
+              </li>
+              <li>
+                <Link href="#blog">Blog</Link>
+              </li>
+            </ul>
+          </div>
+
+
+          <div className="footer-links-group">
+            <h3 className="links-group-title">Legal</h3>
+            <ul className="footer-links-list">
+              <li>
+                <Link href="#privacy">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link href="#terms">Terms of Service</Link>
+              </li>
+              <li>
+                <Link href="#cookies">Cookie Policy</Link>
+              </li>
+              <li>
+                <Link href="#gdpr">GDPR</Link>
+              </li>
+            </ul>
+          </div>
+
+
+          <div className="footer-links-group">
+            <h3 className="links-group-title">Contact Us</h3>
+            <address className="footer-contact">
+              <p className="contact-item">
+                <FaPhone /> +91 999 999 9999
+              </p>
+              <p className="contact-item">
+                <FaEnvelope /> hello@aitravelbuddy.com
+              </p>
+              <p className="contact-item">
+                <FaMapMarker /> India
+              </p>
+            </address>
           </div>
         </div>
       </div>
-      <div className="footer-container">
-        <div className="footer-column">
-          <h3 className="footer-title">About Us</h3>
-          <p className="footer-text">
-            We want to help travellers & Explorer to enhnace their travel Experience.
-          </p>
-          <h3 className="footer-title">Contact Us</h3>
-          <p className="footer-text">
-            <FaPhone className="icon" /> +91 9999 999 999
-          </p>
-          <p className="footer-text">
-            <FaEnvelope className="icon" /> travelguide@ai.com
-          </p>
-        </div>
-        <div className="footer-column">
-          <h3 className="footer-title">Information</h3>
-          <ul className="footer-links">
-            <li>
-              <a href="/about">About Us</a>
-            </li>
-            <li>
-              <a href="/features">Features</a>
-            </li>
-            <li>
-              <a href="/details">Details</a>
-            </li>
-            <li>
-              <a href="/testimonials">Testimonials</a>
-            </li>
-            <li>
-              <a href="/docs">Docs</a>
-            </li>
-            <li>
-              <a href="/faqs">FAQs</a>
-            </li>
-          </ul>
-        </div>
-        <div className="footer-column">
-          <h3 className="footer-title">Helpful Links</h3>
-          <ul className="footer-links">
-            <li>
-              <a href="/services">Services</a>
-            </li>
-            <li>
-              <a href="/support">Support</a>
-            </li>
-            <li>
-              <a href="/terms">Terms & Conditions</a>
-            </li>
-            <li>
-              <a href="/privacy">Privacy Policy</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+
+
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} company.Ltd. All Rights Reserved</p>
-        <div className="social-icons">
-          <FaFacebookF className="social-icon" />
-          <FaGithub className="social-icon" />
-          <FaTwitter className="social-icon" />
-          <FaInstagram className="social-icon" />
+        <div className="footer-bottom-content">
+          <p className="copyright">
+            &copy; {new Date().getFullYear()} AI Travel Buddy. All rights reserved.
+          </p>
+
+          <div className="footer-social">
+            <Link href="#" aria-label="Facebook">
+              <FaFacebookF />
+            </Link>
+            <Link href="#" aria-label="Twitter">
+              <FaTwitter />
+            </Link>
+            <Link href="#" aria-label="Instagram">
+              <FaInstagram />
+            </Link>
+            <Link href="#" aria-label="LinkedIn">
+              <FaLinkedin />
+            </Link>
+            <Link href="#" aria-label="GitHub">
+              <FaGithub />
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
