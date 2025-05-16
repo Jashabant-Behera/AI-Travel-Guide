@@ -1,95 +1,229 @@
+/* Base Styles */
 .recommendation-page {
-  padding: 2rem;
-  color: #0a2a52;
-  font-family: "Segoe UI", sans-serif;
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem 1rem;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+  background: linear-gradient(to bottom right, #f5f7fa, #e4ecf7);
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
 .recommendation-page h2 {
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #222;
+  text-align: center;
   margin-bottom: 0.5rem;
-  color: #135ab7;
 }
 
+.recommendation-page p {
+  text-align: center;
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Form Styles */
 .recommendation-form {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  margin-top: 1rem;
   margin-bottom: 2rem;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
 .recommendation-form input {
-  padding: 0.7rem;
-  border: 2px solid #90c2f7;
+  width: 100%;
+  max-width: 600px;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid #ccc;
   border-radius: 10px;
-  min-width: 250px;
-  transition: border-color 0.3s ease;
+  font-size: 1rem;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .recommendation-form input:focus {
-  border-color: #3399ff;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
   outline: none;
 }
 
 .recommendation-form button {
-  background-color: #135ab7;
-  color: white;
+  background: #4a90e2;
+  color: #fff;
+  padding: 0.9rem 1.5rem;
   border: none;
-  padding: 0.75rem 1.5rem;
   border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.2s ease, background 0.3s ease;
+  box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
 }
 
 .recommendation-form button:hover {
-  background-color: #0d3f8f;
+  background-color: #407bd6;
+  transform: translateY(-2px);
 }
 
-.recommendation-output {
-  margin-top: 2rem;
+.recommendation-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
-.recommendation-actions {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
-}
-
-
+/* Loading State */
 .loading-message {
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 10px;
-  margin-top: 20px;
-  border-radius: 8px;
-  color: #856404;
+  text-align: center;
+  color: #4a90e2;
   font-weight: 500;
+  margin-top: 1.5rem;
 }
-
 
 .loading-spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  margin: 1rem auto;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border-top: 4px solid #3498db;
-  width: 30px;
-  height: 30px;
+  border: 4px solid #dce6f1;
+  border-top-color: #4a90e2;
   animation: spin 1s linear infinite;
-  margin: 10px auto;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.saved-recommendations {
+/* Recommendation Result */
+.recommendation-result {
   margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #eee;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.recommendation-list {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recommendation-output {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+}
+
+.recommendation-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1.2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-bottom: 2px solid #dfe6e9;
+  padding-bottom: 0.5rem;
+}
+
+.description {
+  color: #34495e;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.description p {
+  margin-bottom: 1rem;
+}
+
+.description strong {
+  color: #222;
+}
+
+.description ul,
+.description ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.description li {
+  margin-bottom: 0.5rem;
+}
+
+/* Download Button */
+.download-btn-container {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.download-btn {
+  padding: 0.8rem 1.5rem;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.download-btn:hover {
+  background-color: #219653;
+  transform: scale(1.03);
+}
+
+.download-btn::before {
+  content: "⬇️ ";
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .recommendation-form {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .recommendation-form input {
+    flex: 1;
+  }
+
+  .recommendation-form button {
+    margin-left: 1rem;
+  }
+
+  .recommendation-card {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .recommendation-page {
+    padding: 1rem;
+  }
+
+  .recommendation-page h2 {
+    font-size: 1.8rem;
+  }
+
+  .recommendation-form input {
+    font-size: 0.95rem;
+  }
+
+  .recommendation-form button {
+    width: 100%;
+    margin: 0;
+  }
+
+  .download-btn {
+    width: 100%;
+  }
 }

@@ -1,46 +1,16 @@
 "use client";
-
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
-import RecommendationCard from "./RecommendationCard";
 import "../styles/recommendations.css";
+import ReactMarkdown from "react-markdown";
 
-const Recommendations = ({ user }) => {
-  const recommendationRef = useRef();
+const Recommendations = () => {
   const [location, setLocation] = useState("");
   const [preferences, setPreferences] = useState("");
   const [recommendation, setRecommendation] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [savedRecommendations, setSavedRecommendations] = useState([]);
-  const [fetchingSaved, setFetchingSaved] = useState(false);
-
-  useEffect(() => {
-    const handleGet = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token || !user?._id) return;
-
-        setFetchingSaved(true);
-        const response = await api.post(`/api/recommendations/user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setSavedRecommendations(data.recommendations || []);
-        }
-      } catch (error) {
-        console.error("Error fetching saved recommendations:", error);
-      } finally {
-        setFetchingSaved(false);
-      }
-    };
-
-    handleGet();
-  }, [user]);
+  const recommendationRef = useRef(null);
 
   const handleGenerate = async () => {
     if (!location || !preferences) {
@@ -52,13 +22,12 @@ const Recommendations = ({ user }) => {
       setLoading(true);
       setRecommendation(null);
 
-      const { data } = await api.post("/api/recommendations/ai", {
+      const { data } = await api.post("/api/recommendations", {
         location,
         preferences: preferences.split(",").map((p) => p.trim()),
       });
 
       setRecommendation(data.recommendation);
-      toast.success("AI Recommendation created!");
     } catch (error) {
       toast.error("Failed to generate recommendations.");
       console.error(error);
@@ -67,58 +36,21 @@ const Recommendations = ({ user }) => {
     }
   };
 
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("You're not logged in!");
-        return;
-      }
-
-      const response = await fetch("/api/recommendations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: user._id,
-          location,
-          preferences,
-          recommendation,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSavedRecommendations((prev) => [data.recommendation, ...prev]);
-        toast.success("Recommendation saved to your profile!");
-      } else {
-        console.error("Save failed:", data);
-        toast.error(data.error || "Something went wrong while saving.");
-      }
-    } catch (error) {
-      console.error("Save error:", error);
-      toast.error("Error saving recommendation.");
-    }
-  };
-
-  const handleDownloadPDF = () => {
+  const handleDownload = () => {
     if (!recommendationRef.current) return;
 
     const element = recommendationRef.current.cloneNode(true);
-    const buttons = element.querySelector(".recommendation-actions");
-    if (buttons) buttons.style.display = "none";
+    const buttons = element.querySelector(".download-btn-container");
+    if (buttons) buttons.remove();
 
     import("html2pdf.js").then(({ default: html2pdf }) => {
       html2pdf()
         .set({
           margin: 0.5,
-          filename: "AI_Recommendation.pdf",
+          filename: `Travel_Recommendations_${location.replace(/\s+/g, '_')}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2 },
-          jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
         })
         .from(element)
         .save();
@@ -127,30 +59,30 @@ const Recommendations = ({ user }) => {
 
   return (
     <div className="recommendation-page">
-      <h2>✨ Let AI Guide Your Next Adventure</h2>
-      <p>Tell us where you're going and what you love — we'll whip up something special.</p>
+      <h2>✨ Travel Recommendations</h2>
+      <p>Tell us where you're going and what you're interested in</p>
 
       <div className="recommendation-form">
         <input
           type="text"
-          placeholder="Enter location"
+          placeholder="Enter location (e.g., Paris, France)"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         />
         <input
           type="text"
-          placeholder="Enter preferences (comma separated)"
+          placeholder="Interests (comma separated, e.g., museums, food, hiking)"
           value={preferences}
           onChange={(e) => setPreferences(e.target.value)}
         />
         <button onClick={handleGenerate} disabled={loading}>
-          {loading ? "Generating..." : "Generate Recommendation"}
+          {loading ? "Generating..." : "Get Recommendations"}
         </button>
       </div>
 
       {loading && (
         <div className="loading-message">
-          <p>✨ AI is crafting your perfect adventure...</p>
+          <p>✨ Finding the best recommendations for you...</p>
           <div className="loading-spinner"></div>
         </div>
       )}
@@ -158,35 +90,20 @@ const Recommendations = ({ user }) => {
       {!loading && recommendation && (
         <div className="recommendation-result">
           <div className="recommendation-output" ref={recommendationRef}>
-            <RecommendationCard recommendation={recommendation} />
-          </div>
-          <div className="recommendation-actions">
-            <button onClick={handleDownloadPDF}>Download as PDF</button>
-            <button onClick={handleSave}>Save to Profile</button>
-          </div>
-        </div>
-      )}
-
-      {savedRecommendations.length > 0 && (
-        <div className="saved-recommendations">
-          <h3>Your Saved Recommendations</h3>
-          {fetchingSaved ? (
-            <p>Loading your recommendations...</p>
-          ) : (
-            <div className="recommendation-list">
-              {savedRecommendations.map((rec, index) => (
-                <RecommendationCard
-                  recommendation={{
-                    name: rec.name,
-                    description: rec.description,
-                    location: rec.location,
-                    category: rec.category,
-                  }}
-                  isSaved
-                />
-              ))}
+            <div className="recommendation-card">
+              <h3>Recommended for {location}</h3>
+              <div className="description">
+                <ReactMarkdown>
+                  {recommendation.replace(/\*\*(.*?)\*\*/g, '**$1**')}
+                </ReactMarkdown>
+              </div>
             </div>
-          )}
+          </div>
+          <div className="download-btn-container">
+            <button onClick={handleDownload} className="download-btn">
+              Download as PDF
+            </button>
+          </div>
         </div>
       )}
     </div>
