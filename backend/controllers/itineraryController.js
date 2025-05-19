@@ -5,25 +5,17 @@ import aiService from "../services/aiService.js";
 
 const createAIItinerary = async (req, res) => {
   try {
-    console.log("1. Received request body:", req.body);
-    console.log("2. Authenticated user:", req.user);
-
     const { location, preferences, days } = req.body;
-    const userId = req.user._id; // Changed from req.body.userId
-
-    console.log("3. Parsed parameters:", { location, preferences, days, userId });
+    const userId = req.user._id;
 
     if (!location || !preferences || !days) {
-      console.log("4. Missing required fields");
       return res.status(400).json({
         error: "Location, preferences and days are required",
         received: req.body,
       });
     }
 
-    console.log("5. Calling AI service...");
     const aiGeneratedText = await aiService.generateItinerary(location, preferences, days);
-    console.log("6. AI response received");
 
     const itinerary = new Itinerary({
       user: userId,
@@ -33,7 +25,6 @@ const createAIItinerary = async (req, res) => {
       details: aiGeneratedText,
     });
 
-    console.log("7. Saving itinerary...");
     await itinerary.save();
 
     res.status(201).json({
@@ -41,7 +32,6 @@ const createAIItinerary = async (req, res) => {
       itinerary,
     });
   } catch (error) {
-    console.error("8. Full error stack:", error);
     res.status(500).json({
       error: "Complete error details",
       message: error.message,
@@ -52,12 +42,11 @@ const createAIItinerary = async (req, res) => {
 
 const getAllItineraries = async (req, res) => {
   try {
-    console.log("Fetching itineraries for user:", req.userId); // Debug log
-    // Use req.userId from middleware
+    console.log("Fetching itineraries for user:", req.userId);
 
     const itineraries = await Itinerary.find({ user: req.userId }).sort({ createdAt: -1 });
 
-    console.log("Found itineraries:", itineraries.length); // Debug log
+    console.log("Found itineraries:", itineraries.length);
 
     res.json(itineraries);
   } catch (err) {
@@ -72,11 +61,11 @@ const getAllItineraries = async (req, res) => {
 const getItineraryById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(`Fetching itinerary ${id} for user ${req.userId}`); // Debug log
+    console.log(`Fetching itinerary ${id} for user ${req.userId}`);
 
     const itinerary = await Itinerary.findOne({
       _id: id,
-      user: req.userId, // Ensure the itinerary belongs to the user
+      user: req.userId,
     });
 
     if (!itinerary) {
@@ -100,7 +89,7 @@ const updateItinerary = async (req, res) => {
   try {
     const { location, dates, activities } = req.body;
     const itinerary = await Itinerary.findOneAndUpdate(
-      { _id: req.params.id, user: req.userId }, // Ensure the itinerary belongs to the user
+      { _id: req.params.id, user: req.userId },
       { location, dates, activities },
       { new: true }
     );
@@ -113,7 +102,7 @@ const updateItinerary = async (req, res) => {
 
 const deleteItinerary = async (req, res) => {
   try {
-    const itinerary = await Itinerary.findOneAndDelete({ _id: req.params.id, user: req.userId }); // Ensure the itinerary belongs to the user
+    const itinerary = await Itinerary.findOneAndDelete({ _id: req.params.id, user: req.userId });
     if (!itinerary) return res.status(404).json({ error: "Itinerary not found" });
     res.json({ message: "Itinerary deleted successfully" });
   } catch (err) {

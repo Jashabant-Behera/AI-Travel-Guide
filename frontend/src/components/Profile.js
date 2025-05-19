@@ -3,7 +3,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../styles/Profile.css";
 import Recommendations from "./Recommendations";
-import SavedItineraries from "./Itineraries";
+import Itineraries from "./Itineraries";
 import UserInfo from "./UserInfo";
 import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";
@@ -67,7 +67,7 @@ const Profile = () => {
       case "Your Itinerary":
         return (
           <div className="content">
-            <SavedItineraries />
+            <Itineraries />
           </div>
         );
       case "Your Locations":
