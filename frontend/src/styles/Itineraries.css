@@ -1,0 +1,54 @@
+.saved-itineraries-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.saved-itineraries-container h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+
+.itinerary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.empty-message {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.create-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.create-button:hover {
+  background-color: #45a049;
+}
+
+.itineraries-container {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  padding: 2rem;
+  flex-wrap: wrap;
+}
+
+.itineraries-section,
+.create-itinerary-section {
+  flex: 1;
+  min-width: 300px;
+}

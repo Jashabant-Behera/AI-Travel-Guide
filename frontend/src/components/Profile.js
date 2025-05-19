@@ -3,7 +3,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import "../styles/Profile.css";
 import Recommendations from "./Recommendations";
-import SavedItineraries from "./SavedItineraries";
+import SavedItineraries from "./Itineraries";
 import UserInfo from "./UserInfo";
 import { AppContext } from "../context/AppContext";
 import { useRouter } from "next/navigation";

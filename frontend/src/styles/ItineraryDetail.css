@@ -1,0 +1,102 @@
+.itinerary-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.itinerary-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.itinerary-header h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.itinerary-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.itinerary-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.public-btn, .export-btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.public-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.public-btn:hover {
+  background-color: #27ae60;
+}
+
+.export-btn {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.export-btn:hover {
+  background-color: #8e44ad;
+}
+
+.share-section {
+  margin-bottom: 2rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.share-section p {
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.share-section input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.itinerary-content {
+  line-height: 1.6;
+  color: #34495e;
+}
+
+.itinerary-content p {
+  margin-bottom: 1rem;
+}
+
+.itinerary-content ul, .itinerary-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.itinerary-content li {
+  margin-bottom: 0.5rem;
+}
+
+.itinerary-content strong {
+  font-weight: 600;
+  color: #2c3e50;
+}
