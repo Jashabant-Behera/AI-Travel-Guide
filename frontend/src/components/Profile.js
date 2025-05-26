@@ -14,7 +14,6 @@ import {
   faHouse,
   faUser,
   faSuitcaseRolling,
-  faMapLocationDot,
   faRobot,
   faRightFromBracket,
   faBars,
@@ -70,12 +69,6 @@ const Profile = () => {
             <Itineraries />
           </div>
         );
-      case "Your Locations":
-        return (
-          <div className="content">
-            <p>Locations content goes here.</p>
-          </div>
-        );
       case "AI Recommendations":
         return (
           <div className="content">
@@ -124,7 +117,6 @@ const Profile = () => {
           {[
             { label: "Your Account", icon: faUser },
             { label: "Your Itinerary", icon: faSuitcaseRolling },
-            { label: "Your Locations", icon: faMapLocationDot },
             { label: "AI Recommendations", icon: faRobot },
           ].map(({ label, icon }) => (
             <li

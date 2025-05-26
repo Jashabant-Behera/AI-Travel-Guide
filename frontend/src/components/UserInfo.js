@@ -1,84 +1,246 @@
 "use client";
 import "../styles/userinfo.css";
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/AppContext";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faCheck, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
-import ResetPassword from "./ResetPassword";
-import EmailVerify from "./VerifyEmail";
+import { faPen, faCheck, faShieldAlt, faUser, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import api from "../utils/api";
+import Link from "next/link";
+
+const PROFILE_PICTURES = [
+  "/profiles/avatar1.png",
+  "/profiles/avatar2.png",
+  "/profiles/avatar3.png",
+  "/profiles/avatar4.png",
+  "/profiles/avatar5.png",
+  "/profiles/avatar6.png",
+];
+
+const BANNER_IMAGES = [
+  "/banners/banner1.jpg",
+  "/banners/banner2.jpg",
+  "/banners/banner3.jpg",
+  "/banners/banner4.jpg",
+  "/banners/banner5.jpg",
+];
 
 const UserInfo = () => {
-  const { userData } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const { userData, setUserData } = useContext(AppContext);
   const [editMode, setEditMode] = useState({
     name: false,
     gender: false,
     location: false,
   });
   const [formValues, setFormValues] = useState({
-    name: userData.name,
-    gender: userData.gender || "",
-    location: userData.userLocation || "",
+    name: "",
+    gender: "",
+    location: "",
   });
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [showVerifyForm, setShowVerifyForm] = useState(false);
-  const [bannerImage, setBannerImage] = useState("/banner.jpg");
-  const [profileImage, setProfileImage] = useState("/avatar.png");
-  const bannerInputRef = useRef(null);
-  const profileInputRef = useRef(null);
+
+  const [bannerImage, setBannerImage] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+  const [showProfileSelector, setShowProfileSelector] = useState(false);
+  const [showBannerSelector, setShowBannerSelector] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    console.log("Current userData:", userData);
+    if (userData) {
+      setFormValues({
+        name: userData.name || "",
+        gender: userData.gender || "",
+        location: userData.userLocation || "",
+      });
+      setProfileImage(userData.profileImage || "/profiles/avatar1.png");
+      setBannerImage(userData.bannerImage || "/banners/banner1.jpg");
+      setIsLoading(false);
+    }
+  }, [userData]);
 
   const handleInputChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value });
   };
 
-  const handleSave = (field) => {
-    setEditMode({ ...editMode, [field]: false });
-  };
-
-  const handleImageChange = (e, type) => {
-    const file = e.target.files[0];
-    if (file) {
-      const newUrl = URL.createObjectURL(file);
-      if (type === "banner") setBannerImage(newUrl);
-      else setProfileImage(newUrl);
-    }
-  };
-
-  const triggerFileInput = (ref) => {
-    ref.current.click();
-  };
-
-  const verifyOTP = async () => {
+  const handleSave = async (field) => {
     try {
-      const { data } = await api.post(`/api/auth/verifyOTP`);
-      if (data.success) {
-        toast.success(data.message);
+      setIsUpdating(true);
+      const payload =
+        field === "location"
+          ? { userLocation: formValues.location }
+          : { [field]: formValues[field] };
+
+      const { data } = await api.put("/api/user/update", payload);
+
+      if (data?.success) {
+        toast.success("Profile updated successfully");
+        const updatedUserData = {
+          ...userData,
+          ...(field === "location"
+            ? { userLocation: formValues.location }
+            : { [field]: formValues[field] }),
+        };
+        setUserData(updatedUserData);
+        localStorage.setItem("user", JSON.stringify(updatedUserData));
+        setEditMode({ ...editMode, [field]: false });
       } else {
-        toast.error(data.message);
+        throw new Error(data?.message || "Update failed");
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
+  const selectProfilePicture = async (img) => {
+    try {
+      setIsUpdating(true);
+      const { data } = await api.put("/api/user/update", {
+        profileImage: img,
+      });
+
+      if (data?.success) {
+        toast.success("Profile picture updated");
+        setProfileImage(img);
+        const updatedUser = { ...userData, profileImage: img };
+        setUserData(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setShowProfileSelector(false);
+      } else {
+        throw new Error(data?.message || "Update failed");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const selectBannerImage = async (img) => {
+    try {
+      setIsUpdating(true);
+      const { data } = await api.put("/api/user/update", {
+        bannerImage: img,
+      });
+
+      if (data?.success) {
+        toast.success("Banner image updated");
+        setBannerImage(img);
+        const updatedUser = { ...userData, bannerImage: img };
+        setUserData(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setShowBannerSelector(false);
+      } else {
+        throw new Error(data?.message || "Update failed");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="loading-spinner"></div>;
+  }
+
   return (
     <div className="user-info-container">
+      {isUpdating && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
+
+      {showProfileSelector && (
+        <div className="image-selector-modal">
+          <div className="image-selector-content">
+            <div className="modal-header">
+              <h3>Choose a Profile Picture</h3>
+              <button
+                onClick={() => setShowProfileSelector(false)}
+                className="close-btn"
+                disabled={isUpdating}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+            <div className="image-grid">
+              {PROFILE_PICTURES.map((img, index) => (
+                <div
+                  key={index}
+                  className={`image-option ${profileImage === img ? "selected" : ""}`}
+                  onClick={() => !isUpdating && selectProfilePicture(img)}
+                >
+                  <Image
+                    src={img}
+                    alt={`Profile ${index + 1}`}
+                    width={100}
+                    height={100}
+                    className="selector-img"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBannerSelector && (
+        <div className="image-selector-modal">
+          <div className="image-selector-content">
+            <div className="modal-header">
+              <h3>Choose a Banner</h3>
+              <button
+                onClick={() => setShowBannerSelector(false)}
+                className="close-btn"
+                disabled={isUpdating}
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+            <div className="image-grid">
+              {BANNER_IMAGES.map((img, index) => (
+                <div
+                  key={index}
+                  className={`image-option ${bannerImage === img ? "selected" : ""}`}
+                  onClick={() => !isUpdating && selectBannerImage(img)}
+                >
+                  <Image
+                    src={img}
+                    alt={`Banner ${index + 1}`}
+                    width={200}
+                    height={100}
+                    className="selector-img"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="banner-profile-container">
         <div className="banner-section">
-          <Image src={bannerImage} alt="Banner" fill className="banner-img" priority />
+          <Image
+            src={bannerImage}
+            alt="Banner"
+            fill
+            className="banner-img"
+            priority
+            onError={(e) => {
+              e.target.src = "/banners/banner1.jpg";
+              setBannerImage("/banners/banner1.jpg");
+            }}
+          />
           <div className="banner-corner-effect"></div>
-          <div className="penoverlay" onClick={() => triggerFileInput(bannerInputRef)}>
+          <div className="penoverlay" onClick={() => !isUpdating && setShowBannerSelector(true)}>
             <FontAwesomeIcon icon={faPen} className="penicon" />
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            ref={bannerInputRef}
-            onChange={(e) => handleImageChange(e, "banner")}
-            className="hidden-input"
-          />
         </div>
 
         <div className="profile-img-wrapper">
@@ -88,18 +250,15 @@ const UserInfo = () => {
             width={160}
             height={160}
             className="profile-img"
+            onError={(e) => {
+              e.target.src = "/profiles/avatar1.png";
+              setProfileImage("/profiles/avatar1.png");
+            }}
           />
           <div className="profile-corner-effect"></div>
-          <div className="edit-overlay" onClick={() => triggerFileInput(profileInputRef)}>
+          <div className="edit-overlay" onClick={() => !isUpdating && setShowProfileSelector(true)}>
             <FontAwesomeIcon icon={faPen} className="edit-icon" />
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            ref={profileInputRef}
-            onChange={(e) => handleImageChange(e, "profile")}
-            className="hidden-input"
-          />
         </div>
       </div>
 
@@ -164,16 +323,25 @@ const UserInfo = () => {
                       className="editable-input"
                     />
                   )}
-                  <button onClick={() => handleSave(field)} className="save-btn">
+                  <button
+                    onClick={() => handleSave(field)}
+                    className="save-btn"
+                    disabled={isUpdating}
+                  >
                     <FontAwesomeIcon icon={faCheck} />
                   </button>
                 </div>
               ) : (
                 <div className="view-group">
-                  <span className="readonly-text">{formValues[field] || "Not specified"}</span>
+                  <span className="readonly-text">
+                    {field === "location"
+                      ? userData.userLocation || "Not specified"
+                      : userData[field] || "Not specified"}
+                  </span>
                   <button
                     className="edit-btn"
                     onClick={() => setEditMode({ ...editMode, [field]: true })}
+                    disabled={isUpdating}
                   >
                     <FontAwesomeIcon icon={faPen} />
                   </button>
@@ -192,26 +360,18 @@ const UserInfo = () => {
         <h3 className="section-title">
           <FontAwesomeIcon icon={faShieldAlt} /> Security
         </h3>
+
         <div className="security-section">
           <div className="security-option">
             <h3>Need a Fresh Password?</h3>
             <p>
-              Feeling like your password’s been around since dial-up? Time to upgrade your digital
+              Feeling like your password's been around since dial-up? Time to upgrade your digital
               fortress.
             </p>
-            {showPasswordForm && <ResetPassword />}
             <div className="security-btn-container">
-              {!showPasswordForm ? (
-                <button onClick={() => setShowPasswordForm(true)} className="security-btn">
-                  Change Password
-                </button>
-              ) : (
-                <>
-                  <button onClick={() => setShowPasswordForm(false)} className="cancel-btn">
-                    Cancel
-                  </button>
-                </>
-              )}
+              <Link href="/reset" className="security-btn">
+                Change Password
+              </Link>
             </div>
           </div>
 
@@ -222,30 +382,10 @@ const UserInfo = () => {
             ) : (
               <>
                 <p>Let's lock in your email and make things official.</p>
-                {showVerifyForm && <EmailVerify />}
                 <div className="security-btn-container">
-                  {!showVerifyForm ? (
-                    <button
-                      onClick={() => {
-                        verifyOTP();
-                        setShowVerifyForm(true);
-                      }}
-                      className={`security-btn`}
-                    >
-                      Verify Email
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => {
-                          setShowVerifyForm(false);
-                        }}
-                        className="cancel-btn"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  )}
+                  <Link href="/emailVerify" className="security-btn">
+                    Verify Email
+                  </Link>
                 </div>
               </>
             )}

@@ -9,7 +9,7 @@ const Testimonial = () => {
         <h2>What Our Travelers Say</h2>
         <div className="testimonials-section">
           <div className="testimonial">
-            <img src="/aditi.png" alt="Traveler 1" className="testimonial-img" />
+            <img src="/testimony/aditi.png" alt="Traveler 1" className="testimonial-img" />
             <div className="testimonial-content">
               <h3 className="user-name">Aditi Sharma</h3>
               <p className="user-feedback">
@@ -22,7 +22,7 @@ const Testimonial = () => {
           </div>
 
           <div className="testimonial">
-            <img src="/james.png" alt="Traveler 2" className="testimonial-img" />
+            <img src="/testimony/james.png" alt="Traveler 2" className="testimonial-img" />
             <div className="testimonial-content">
               <h3 className="user-name">James Anderson</h3>
               <p className="user-feedback">
@@ -34,7 +34,7 @@ const Testimonial = () => {
           </div>
 
           <div className="testimonial">
-            <img src="/priya.png" alt="Traveler 3" className="testimonial-img" />
+            <img src="/testimony/priya.png" alt="Traveler 3" className="testimonial-img" />
             <div className="testimonial-content">
               <h3 className="user-name">Priya Patel</h3>
               <p className="user-feedback">
@@ -46,7 +46,7 @@ const Testimonial = () => {
           </div>
 
           <div className="testimonial">
-            <img src="/rahul.png" alt="Traveler 4" className="testimonial-img" />
+            <img src="/testimony/rahul.png" alt="Traveler 4" className="testimonial-img" />
             <div className="testimonial-content">
               <h3 className="user-name">Rahul Mehta</h3>
               <p className="user-feedback">

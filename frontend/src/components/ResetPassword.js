@@ -1,19 +1,19 @@
 "use client";
-
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import api from "@/utils/api";
+import Image from "next/image";
 import "../styles/resetPassword.css";
 
-const ResetPassword = () => {
+const ResetPasswordPage = () => {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [OTP, setOTP] = useState("");
   const [OTPSubmit, setOTPSubmit] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   const inputRefs = useRef([]);
 
@@ -80,8 +80,11 @@ const ResetPassword = () => {
       });
 
       if (data.success) {
-        toast.success(data.message);
-        router.push("/profile");
+        setIsVerified(true);
+        setTimeout(() => {
+          router.push("/profile");
+        }, 3000);
+        toast.success("Password reset successfully! Redirecting...");
       } else {
         toast.error(data.message);
       }
@@ -89,6 +92,23 @@ const ResetPassword = () => {
       toast.error(error.response?.data?.message || "Failed to reset password.");
     }
   };
+
+  if (isVerified) {
+    return (
+      <div className="verification-success">
+        <div className="success-content">
+          <h2>Password Reset Successful!</h2>
+          <p>Your password has been updated successfully. Enjoy your travels!</p>
+          <Image
+            src="/icons/success.png"
+            alt="Success"
+            width={100}
+            height={100}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -98,7 +118,14 @@ const ResetPassword = () => {
     >
       <div className="reset-box">
         <div className="logo-container">
-          <img onClick={() => router.push("/")} src="/logo.png" alt="Logo" className="logo" />
+          <Image
+            onClick={() => router.push("/")}
+            src="/icons/logo.png"
+            alt="Logo"
+            width={100}
+            height={40}
+            className="logo"
+          />
         </div>
 
         {!emailSent && (
@@ -106,7 +133,13 @@ const ResetPassword = () => {
             <h1>Reset Password</h1>
             <p>Enter your registered email address</p>
             <div className="reset-input">
-              <img src="/mail.png" alt="Mail Icon" className="mail" />
+              <Image
+                src="/icons/mail.png"
+                alt="Mail Icon"
+                width={20}
+                height={20}
+                className="mail"
+              />
               <input
                 type="email"
                 placeholder="Email Id"
@@ -165,4 +198,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default ResetPasswordPage;

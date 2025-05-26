@@ -1,15 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
 import ReactMarkdown from "react-markdown";
 import "../styles/Itineraries.css";
 
 const Itineraries = () => {
+  const { id } = useParams();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const [itineraries, setItineraries] = useState([]);
+  const [itinerary, setItinerary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isPublic, setIsPublic] = useState(false);
+  const [shareLink, setShareLink] = useState("");
   const [formData, setFormData] = useState({
     location: "",
     preferences: "",
@@ -19,9 +23,7 @@ const Itineraries = () => {
   const [selectedItinerary, setSelectedItinerary] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(null);
-  const [editingId, setEditingId] = useState(null);
 
-  // Fetch itineraries on component mount
   useEffect(() => {
     const fetchItineraries = async () => {
       try {
@@ -36,6 +38,26 @@ const Itineraries = () => {
     };
     fetchItineraries();
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      const fetchItinerary = async () => {
+        try {
+          const { data } = await api.get(`/api/itinerary/${id}`);
+          setItinerary(data);
+          setIsPublic(data.isPublic);
+          if (data.shareToken) {
+            setShareLink(`${window.location.origin}/api/itinerary/share/${data.shareToken}`);
+          }
+        } catch (error) {
+          toast.error("Failed to fetch itinerary");
+          console.error(error);
+          router.push("/itineraries");
+        }
+      };
+      fetchItinerary();
+    }
+  }, [id, router]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +77,6 @@ const Itineraries = () => {
       preferences: "",
       days: 3,
     });
-    setEditingId(null);
   };
 
   const handleSubmit = async (e) => {
@@ -73,23 +94,12 @@ const Itineraries = () => {
         days: parseInt(formData.days, 10),
       };
 
-      if (editingId) {
-        const { data } = await api.put(`/api/itinerary/${editingId}`, itineraryData);
-        setItineraries((prev) =>
-          prev.map((item) => (item._id === editingId ? data.itinerary : item))
-        );
-        toast.success("Itinerary updated successfully");
-      } else {
-        const { data } = await api.post("/api/itinerary/create", itineraryData);
-        setItineraries((prev) => [data.itinerary, ...prev]);
-        toast.success("Itinerary created successfully");
-      }
+      const { data } = await api.post("/api/itinerary/create", itineraryData);
+      setItineraries((prev) => [data.itinerary, ...prev]);
+      toast.success("Itinerary created successfully");
       resetForm();
     } catch (error) {
-      toast.error(
-        error.response?.data?.error ||
-          (editingId ? "Failed to update itinerary" : "Failed to create itinerary")
-      );
+      toast.error(error.response?.data?.error || "Failed to create itinerary");
       console.error(error);
     } finally {
       setCreating(false);
@@ -107,15 +117,6 @@ const Itineraries = () => {
         console.error(error);
       }
     }
-  };
-
-  const handleEdit = (itinerary) => {
-    setFormData({
-      location: itinerary.location,
-      preferences: itinerary.preferences.join(", "),
-      days: itinerary.days,
-    });
-    setEditingId(itinerary._id);
   };
 
   const handleTogglePublic = async (id) => {
@@ -145,22 +146,27 @@ const Itineraries = () => {
     setShowModal(true);
   };
 
-  const handleExport = (id, action) => {
+  const handleDownloadPDF = (id) => {
     const itinerary = itineraries.find((item) => item._id === id);
+    if (!itinerary) return;
 
-    if (action === "file") {
-      window.open(`/api/itinerary/export/${id}`, "_blank");
-    } else if (action === "link") {
-      if (itinerary?.shareToken) {
-        navigator.clipboard.writeText(
-          `${window.location.origin}/api/itinerary/share/${itinerary.shareToken}`
-        );
-        toast.success("Link copied to clipboard!");
-      } else {
-        toast.warning("Please make itinerary public first");
-      }
-    }
-    setShowExportOptions(null);
+    fetch(`/api/itinerary/export/${id}`)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `itinerary-${itinerary.location}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      })
+      .catch((error) => {
+        console.error("Error downloading the PDF:", error);
+        toast.error("Failed to download the itinerary PDF");
+      });
   };
 
   if (loading) {
@@ -182,7 +188,7 @@ const Itineraries = () => {
       <div className="content-grid">
         <section className="create-section">
           <div className="card create-card">
-            <h2>{editingId ? "Edit Itinerary" : "Create New Itinerary"}</h2>
+            <h2>Create New Itinerary</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="location">Destination</label>
@@ -229,19 +235,12 @@ const Itineraries = () => {
                   {creating ? (
                     <>
                       <span className="spinner"></span>
-                      {editingId ? "Updating..." : "Creating..."}
+                      Creating...
                     </>
-                  ) : editingId ? (
-                    "Update Itinerary"
                   ) : (
                     "Create Itinerary"
                   )}
                 </button>
-                {editingId && (
-                  <button type="button" className="secondary-button" onClick={resetForm}>
-                    Cancel
-                  </button>
-                )}
               </div>
             </form>
           </div>
@@ -278,51 +277,39 @@ const Itineraries = () => {
                   </p>
 
                   <div className="itinerary-preview">
-                    <ReactMarkdown>{truncateText(itinerary.details, 20)}</ReactMarkdown>
+                    <ReactMarkdown>{truncateText(itinerary.details, 30)}</ReactMarkdown>
                     <button className="text-link" onClick={() => handleViewDetails(itinerary)}>
                       ...more
                     </button>
                   </div>
 
                   <div className="card-actions">
-                    <button className="action-btn edit-btn" onClick={() => handleEdit(itinerary)}>
-                      Edit
-                    </button>
+                    <div className="action-group">
+                      <button
+                        className="action-btn export-btn"
+                        onClick={() => handleDownloadPDF(itinerary._id)}
+                      >
+                        Download PDF
+                      </button>
+                    </div>
 
-                    <button
-                      className="action-btn export-btn"
-                      onClick={() =>
-                        setShowExportOptions(
-                          showExportOptions === itinerary._id ? null : itinerary._id
-                        )
-                      }
-                    >
-                      Export
-                    </button>
-                    {showExportOptions === itinerary._id && (
-                      <div className="export-options">
-                        <button onClick={() => handleExport(itinerary._id, "file")}>
-                          Export as PDF
-                        </button>
-                        <button onClick={() => handleExport(itinerary._id, "link")}>
-                          Copy Share Link
-                        </button>
-                      </div>
-                    )}
+                    <div className="action-group">
+                      <button
+                        className="action-btn public-btn"
+                        onClick={() => handleTogglePublic(itinerary._id)}
+                      >
+                        {itinerary.isPublic ? "Private" : "Public"}
+                      </button>
+                    </div>
 
-                    <button
-                      className="action-btn public-btn"
-                      onClick={() => handleTogglePublic(itinerary._id)}
-                    >
-                      {itinerary.isPublic ? "Private" : "Public"}
-                    </button>
-
-                    <button
-                      className="action-btn delete-btn"
-                      onClick={() => handleDelete(itinerary._id)}
-                    >
-                      Delete
-                    </button>
+                    <div className="action-group">
+                      <button
+                        className="action-btn delete-btn"
+                        onClick={() => handleDelete(itinerary._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -331,7 +318,6 @@ const Itineraries = () => {
         </section>
       </div>
 
-      {/* Details Modal */}
       {showModal && selectedItinerary && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

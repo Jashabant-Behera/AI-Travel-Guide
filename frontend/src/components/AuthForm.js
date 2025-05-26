@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
@@ -19,6 +19,8 @@ const AuthForm = () => {
     password: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -29,23 +31,22 @@ const AuthForm = () => {
 
   const onSubmithandler = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      let res;
-      if (state === "Sign Up") {
-        res = await api.post("/api/auth/signup", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        });
-      } else {
-        res = await api.post("/api/auth/login", {
-          email: formData.email,
-          password: formData.password,
-        });
+      const endpoint = state === "Sign Up" ? "/api/auth/signup" : "/api/auth/login";
+      const payload =
+        state === "Sign Up"
+          ? { name: formData.name, email: formData.email, password: formData.password }
+          : { email: formData.email, password: formData.password };
+
+      const { data } = await api.post(endpoint, payload);
+
+      if (!data?.success) {
+        throw new Error(data?.message || "Authentication failed");
       }
 
-      const { data } = res;
+      toast.success(data.message);
 
       if (data.success) {
         toast.success(data.message);
@@ -56,16 +57,13 @@ const AuthForm = () => {
         }
 
         const safeUserData = {
-          id: data.user.id,
-          name: data.user.name,
-          email: data.user.email,
-          isVerified: data.user.isAccountVerified,
+          id: data.user?.id || data.user?._id || "",
+          name: data.user?.name || "",
+          email: data.user?.email || formData.email,
+          isVerified: data.user?.isAccountVerified || false,
         };
+
         localStorage.setItem("user", JSON.stringify(safeUserData));
-
-        console.log("token:", data.token);
-        console.log("user Data", safeUserData)
-
         setIsLoggedin(true);
         setUserData(safeUserData);
 
@@ -75,7 +73,9 @@ const AuthForm = () => {
       }
     } catch (error) {
       console.error("Auth error:", error);
-      toast.error(error.response?.data?.message || "Something went wrong.");
+      toast.error(error.response?.data?.message || error.message || "Something went wrong.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,7 +85,7 @@ const AuthForm = () => {
         <div>
           <Image
             onClick={() => router.push("/")}
-            src="/logo.png"
+            src="/icons/logo.png"
             alt="Logo"
             width={40}
             height={40}
@@ -99,7 +99,7 @@ const AuthForm = () => {
         <form onSubmit={onSubmithandler} method="POST">
           {state === "Sign Up" && (
             <div className="auth-input">
-              <Image src="/people.png" alt="People" width={20} height={20} />
+              <Image src="/icons/people.png" alt="People" width={20} height={20} />
               <input
                 onChange={handleInputChange}
                 value={formData.name}
@@ -113,7 +113,7 @@ const AuthForm = () => {
           )}
 
           <div className="auth-input">
-            <Image src="/mail.png" alt="Mail" width={20} height={20} />
+            <Image src="/icons/mail.png" alt="Mail" width={20} height={20} />
             <input
               onChange={handleInputChange}
               value={formData.email}
@@ -126,7 +126,7 @@ const AuthForm = () => {
           </div>
 
           <div className="auth-input">
-            <Image src="/lock.png" alt="Lock" width={20} height={20} />
+            <Image src="/icons/lock.png" alt="Lock" width={20} height={20} />
             <input
               onChange={handleInputChange}
               value={formData.password}

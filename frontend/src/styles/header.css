@@ -1,5 +1,5 @@
 .header {
-  background-image: url("/background9.jpg");
+  background-image: url("/backdrop/background9.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -124,7 +124,7 @@
     height: 100vh;
     min-height: 400px;
     margin: 0;
-    background-image: url("/background6.jpg");
+    background-image: url("/backdrop/background6.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

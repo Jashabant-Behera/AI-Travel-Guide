@@ -173,14 +173,14 @@
 }
 
 .signup-bg {
-  background-image: url("/background22.jpg");
+  background-image: url("/backdrop/background22.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .login-bg {
-  background-image: url("/background23.jpg");
+  background-image: url("/backdrop/background23.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

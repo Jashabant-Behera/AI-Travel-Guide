@@ -42,11 +42,10 @@ const createAIItinerary = async (req, res) => {
 
 const getAllItineraries = async (req, res) => {
   try {
-    console.log("Fetching itineraries for user:", req.userId);
+
 
     const itineraries = await Itinerary.find({ user: req.userId }).sort({ createdAt: -1 });
 
-    console.log("Found itineraries:", itineraries.length);
 
     res.json(itineraries);
   } catch (err) {

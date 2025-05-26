@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -8,10 +7,11 @@ import Image from "next/image";
 import api from "@/utils/api";
 import "../styles/verifyEmail.css";
 
-const EmailVerify = () => {
+const VerifyEmailPage = () => {
   const router = useRouter();
   const { isLoggedin, userData, getUserData } = useContext(AppContext);
   const [resendTimer, setResendTimer] = useState(0);
+  const [isVerified, setIsVerified] = useState(false);
 
   const inputRefs = useRef([]);
 
@@ -57,9 +57,12 @@ const EmailVerify = () => {
       const { data } = await api.post(`/api/auth/verifyAccount`, { OTP });
 
       if (data.success) {
-        toast.success(data.message);
+        setIsVerified(true);
         await getUserData();
-        router.push("/profile");
+        setTimeout(() => {
+          router.push("/profile");
+        }, 3000);
+        toast.success("Email verified successfully! Redirecting...");
       } else {
         toast.error(data.message);
       }
@@ -95,23 +98,41 @@ const EmailVerify = () => {
   };
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    if (userData && userData.isAccountVerified) {
-      if (window.location.pathname !== "/profile") {
-        router.push("/");
-      }
-    } else if (!isLoggedin) {
-      router.push("/auth");
+    if (userData?.isAccountVerified) {
+      setIsVerified(true);
+      setTimeout(() => {
+        router.push("/profile");
+      }, 3000);
     }
-  }, [isLoggedin, userData, router]);
+  }, [userData, router]);
+
+  useEffect(() => {
+    verifyOTP();
+  }, []);
+
+  if (isVerified) {
+    return (
+      <div className="verification-success">
+        <div className="success-content">
+          <h2>Email Verified Successfully!</h2>
+          <p>Your email is now verified. Good to go and enjoy your travels!</p>
+          <Image
+            src="/icons/success.png"
+            alt="Success"
+            width={100}
+            height={100}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="email-verify-container">
       <div className="email-verify-box">
         <div>
           <Image
-            src="/logo.png"
+            src="/icons/logo.png"
             alt="Logo"
             width={40}
             height={40}
@@ -162,4 +183,4 @@ const EmailVerify = () => {
   );
 };
 
-export default EmailVerify;
+export default VerifyEmailPage;

@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { config } from "dotenv";
 config();
-import axios from "axios";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -43,32 +42,9 @@ const chatbotResponse = async (message) => {
   }
 };
 
-const generateLocationInfo = async (location) => {
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-3.5-turbo",
-        messages: [
-          {
-            role: "user",
-            content: `Provide a brief description and specialties of ${location}.`,
-          },
-        ],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
 
-    return response.data.choices[0].message.content;
-  } catch (error) {
-    console.error("Error generating location info:", error);
-    throw new Error("Failed to generate location information.");
-  }
+export default {
+  getRecommendations,
+  generateItinerary,
+  chatbotResponse,
 };
-
-export default { getRecommendations, generateItinerary, chatbotResponse, generateLocationInfo };

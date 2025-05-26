@@ -1,8 +1,9 @@
 .recommendation-page {
+  height: 90vh;
   max-width: 1000px;
   margin: 2rem auto;
   padding: 2rem 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: #1a1a1a;
   background: linear-gradient(to bottom right, #f5f7fa, #e4ecf7);
   border-radius: 20px;
@@ -59,7 +60,9 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.3s ease;
   box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
 }
 
@@ -181,6 +184,10 @@
 }
 
 @media (min-width: 768px) {
+  .recommendation-page {
+    padding: 0;
+  }
+
   .recommendation-form {
     flex-direction: row;
     justify-content: center;
@@ -201,7 +208,7 @@
 
 @media (max-width: 480px) {
   .recommendation-page {
-    padding: 1rem;
+    padding: 0;
   }
 
   .recommendation-page h2 {

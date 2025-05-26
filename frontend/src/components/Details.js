@@ -27,7 +27,7 @@ const Details = () => {
         </p>
       </article>
 
-      <Image className="image" src={"/background1.jpg"} alt="image" width={500} height={500} />
+      <Image className="image" src={"/backdrop/background1.jpg"} alt="image" width={500} height={500} />
     </section>
   );
 };

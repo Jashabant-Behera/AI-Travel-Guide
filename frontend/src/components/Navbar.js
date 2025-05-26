@@ -48,7 +48,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navContainer">
         <Link href="/" className="navlogo">
-          <img src="/Rlogo.png" alt="Logo" className="navbarlogo" />
+          <img src="/icons/Rlogo.png" alt="Logo" className="navbarlogo" />
         </Link>
 
         <button
@@ -80,7 +80,7 @@ const Navbar = () => {
             {userData ? (
               <div className="user-menu">
                 <Image
-                  src="/bagpack.png"
+                  src="/icons/bagpack.png"
                   alt="User Icon"
                   className="bagpacklogo"
                   width={24}

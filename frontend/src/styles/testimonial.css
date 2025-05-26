@@ -1,7 +1,7 @@
 .test {
   position: relative;
   padding: 50px 20px;
-  background-image: url("/background2.jpg");
+  background-image: url("/backdrop/background2.jpg");
   background-size: cover;
   background-position: top center;
   background-repeat: no-repeat;
@@ -97,7 +97,7 @@
   .test {
     margin: 15px;
     border-radius: 8px;
-    background-image: url("/background15.jpg");
+    background-image: url("/backdrop/background15.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

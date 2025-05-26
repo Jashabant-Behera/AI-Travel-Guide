@@ -18,7 +18,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-brand">
           <Link href="/" className="footer-logo-link">
-            <img src="/logo.png" alt="AI Travel Buddy" className="footer-logo" />
+            <img src="/icons/logo.png" alt="AI Travel Buddy" className="footer-logo" />
           </Link>
           <p className="footer-tagline">Your AI-Powered Travel Companion</p>
 
