@@ -8,7 +8,10 @@ import {
   FaInstagram,
   FaEnvelope,
   FaPhone,
-  FaPaperPlane, FaMapMarker, FaLinkedin
+  FaPaperPlane,
+  FaMapMarker,
+  FaLinkedin,
+  FaCode,
 } from "react-icons/fa";
 import "../styles/footer.css";
 
@@ -39,7 +42,6 @@ const Footer = () => {
         </div>
 
         <div className="footer-links-grid">
-
           <div className="footer-links-group">
             <h3 className="links-group-title">Explore</h3>
             <ul className="footer-links-list">
@@ -57,7 +59,6 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-
 
           <div className="footer-links-group">
             <h3 className="links-group-title">Company</h3>
@@ -77,7 +78,6 @@ const Footer = () => {
             </ul>
           </div>
 
-
           <div className="footer-links-group">
             <h3 className="links-group-title">Legal</h3>
             <ul className="footer-links-list">
@@ -96,7 +96,6 @@ const Footer = () => {
             </ul>
           </div>
 
-
           <div className="footer-links-group">
             <h3 className="links-group-title">Contact Us</h3>
             <address className="footer-contact">
@@ -114,30 +113,38 @@ const Footer = () => {
         </div>
       </div>
 
-
       <div className="footer-bottom">
-        <div className="footer-bottom-content">
-          <p className="copyright">
-            &copy; {new Date().getFullYear()} AI Travel Buddy. All rights reserved.
-          </p>
+        <p className="copyright">
+          &copy; {new Date().getFullYear()} AI Travel Buddy. All rights reserved.
+        </p>
 
-          <div className="footer-social">
-            <Link href="#" aria-label="Facebook">
-              <FaFacebookF />
-            </Link>
-            <Link href="#" aria-label="Twitter">
-              <FaTwitter />
-            </Link>
-            <Link href="#" aria-label="Instagram">
-              <FaInstagram />
-            </Link>
-            <Link href="#" aria-label="LinkedIn">
-              <FaLinkedin />
-            </Link>
-            <Link href="#" aria-label="GitHub">
-              <FaGithub />
-            </Link>
-          </div>
+        <div className="footer-social">
+          <Link href="#" aria-label="Facebook">
+            <FaFacebookF />
+          </Link>
+          <Link href="#" aria-label="Twitter">
+            <FaTwitter />
+          </Link>
+          <Link href="#" aria-label="Instagram">
+            <FaInstagram />
+          </Link>
+          <Link href="#" aria-label="LinkedIn">
+            <FaLinkedin />
+          </Link>
+          <Link href="#" aria-label="GitHub">
+            <FaGithub />
+          </Link>
+        </div>
+
+        <div className="source-code-section">
+          <Link
+            href="https://github.com/Jashabant-Behera/AI-Travel-Guide"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="source-code-button"
+          >
+            <FaCode /> View Source Code
+          </Link>
         </div>
       </div>
     </footer>
