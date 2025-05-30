@@ -47,7 +47,6 @@ const UserInfo = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    console.log("Current userData:", userData);
     if (userData) {
       setFormValues({
         name: userData.name || "",

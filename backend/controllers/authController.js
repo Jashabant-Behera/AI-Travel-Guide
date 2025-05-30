@@ -89,7 +89,24 @@ export const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ success: true, message: "Successfully Logged In", token, user });
+    return res.status(200).json({
+      success: true,
+      message: "Successfully Logged In",
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        location: user.userLocation,
+        userLocation: user.userLocation,
+        profileImage: user.profileImage,
+        bannerImage: user.bannerImage,
+        isAccountVerified: user.isAccountVerified,
+        savedItineraries: user.savedItineraries,
+        createdAt: user.createdAt,
+      },
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: "An error occurred during login" });
@@ -292,7 +309,11 @@ export const getUserData = async (req, res) => {
       return res.status(400).json({ success: false, message: "User ID is required" });
     }
 
-    const user = await userModel.findById(userId).select("name email isAccountVerified savedItineraries createdAt");
+    const user = await userModel
+      .findById(userId)
+      .select(
+        "name email gender userLocation profileImage bannerImage isAccountVerified savedItineraries createdAt"
+      );
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
