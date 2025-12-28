@@ -64,6 +64,14 @@ const UserInfo = () => {
   };
 
   const handleSave = async (field) => {
+    if (isUpdating) return;
+    
+    // Validate input
+    if (field === "name" && !formValues.name.trim()) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+    
     try {
       setIsUpdating(true);
       const payload =
@@ -84,17 +92,18 @@ const UserInfo = () => {
         setUserData(updatedUserData);
         localStorage.setItem("user", JSON.stringify(updatedUserData));
         setEditMode({ ...editMode, [field]: false });
-      } else {
-        throw new Error(data?.message || "Update failed");
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error updating profile:", error);
+      // Error toast is handled by api interceptor
     } finally {
       setIsUpdating(false);
     }
   };
 
   const selectProfilePicture = async (img) => {
+    if (isUpdating) return;
+    
     try {
       setIsUpdating(true);
       const { data } = await api.put("/api/user/update", {
@@ -108,17 +117,18 @@ const UserInfo = () => {
         setUserData(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setShowProfileSelector(false);
-      } else {
-        throw new Error(data?.message || "Update failed");
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error updating profile picture:", error);
+      // Error toast is handled by api interceptor
     } finally {
       setIsUpdating(false);
     }
   };
 
   const selectBannerImage = async (img) => {
+    if (isUpdating) return;
+    
     try {
       setIsUpdating(true);
       const { data } = await api.put("/api/user/update", {
@@ -132,11 +142,10 @@ const UserInfo = () => {
         setUserData(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setShowBannerSelector(false);
-      } else {
-        throw new Error(data?.message || "Update failed");
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error updating banner:", error);
+      // Error toast is handled by api interceptor
     } finally {
       setIsUpdating(false);
     }

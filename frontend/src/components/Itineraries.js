@@ -22,42 +22,49 @@ const Itineraries = () => {
   const [creating, setCreating] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showExportOptions, setShowExportOptions] = useState(null);
 
   useEffect(() => {
-    const fetchItineraries = async () => {
-      try {
-        const { data } = await api.get("/api/itinerary/");
-        setItineraries(data);
-      } catch (error) {
-        toast.error("Failed to fetch itineraries");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchItineraries();
   }, []);
 
   useEffect(() => {
     if (id) {
-      const fetchItinerary = async () => {
-        try {
-          const { data } = await api.get(`/api/itinerary/${id}`);
-          setItinerary(data);
-          setIsPublic(data.isPublic);
-          if (data.shareToken) {
-            setShareLink(`${window.location.origin}/api/itinerary/share/${data.shareToken}`);
-          }
-        } catch (error) {
-          toast.error("Failed to fetch itinerary");
-          console.error(error);
-          router.push("/itineraries");
-        }
-      };
       fetchItinerary();
     }
-  }, [id, router]);
+  }, [id]);
+
+  const fetchItineraries = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get("/api/itinerary/");
+      
+      if (data.success) {
+        setItineraries(data.itineraries || []);
+      }
+    } catch (error) {
+      console.error("Error fetching itineraries:", error);
+      // Error toast is handled by api interceptor
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchItinerary = async () => {
+    try {
+      const { data } = await api.get(`/api/itinerary/${id}`);
+      
+      if (data.success) {
+        setItinerary(data.itinerary);
+        setIsPublic(data.itinerary.isPublic);
+        if (data.itinerary.shareToken) {
+          setShareLink(`${window.location.origin}/api/itinerary/share/${data.itinerary.shareToken}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching itinerary:", error);
+      router.push("/itineraries");
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +75,22 @@ const Itineraries = () => {
   };
 
   const validateItinerary = () => {
-    return formData.location.trim() && formData.preferences.trim() && formData.days > 0;
+    if (!formData.location.trim()) {
+      toast.error("Please enter a location");
+      return false;
+    }
+    
+    if (!formData.preferences.trim()) {
+      toast.error("Please enter your preferences");
+      return false;
+    }
+    
+    if (formData.days < 1 || formData.days > 30) {
+      toast.error("Days must be between 1 and 30");
+      return false;
+    }
+    
+    return true;
   };
 
   const resetForm = () => {
@@ -81,8 +103,8 @@ const Itineraries = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (!validateItinerary()) {
-      toast.warning("Please fill all fields properly");
       return;
     }
 
@@ -90,53 +112,65 @@ const Itineraries = () => {
     try {
       const itineraryData = {
         location: formData.location.trim(),
-        preferences: formData.preferences.split(",").map((pref) => pref.trim()),
+        preferences: formData.preferences.split(",").map((pref) => pref.trim()).filter(Boolean),
         days: parseInt(formData.days, 10),
       };
 
       const { data } = await api.post("/api/itinerary/create", itineraryData);
-      setItineraries((prev) => [data.itinerary, ...prev]);
-      toast.success("Itinerary created successfully");
-      resetForm();
+      
+      if (data.success) {
+        setItineraries((prev) => [data.itinerary, ...prev]);
+        toast.success("Itinerary created successfully");
+        resetForm();
+      }
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to create itinerary");
-      console.error(error);
+      console.error("Error creating itinerary:", error);
+      // Error toast is handled by api interceptor
     } finally {
       setCreating(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this itinerary?")) {
-      try {
-        await api.delete(`/api/itinerary/${id}`);
+    if (!window.confirm("Are you sure you want to delete this itinerary?")) {
+      return;
+    }
+
+    try {
+      const { data } = await api.delete(`/api/itinerary/${id}`);
+      
+      if (data.success) {
         setItineraries((prev) => prev.filter((item) => item._id !== id));
         toast.success("Itinerary deleted successfully");
-      } catch (error) {
-        toast.error("Failed to delete itinerary");
-        console.error(error);
       }
+    } catch (error) {
+      console.error("Error deleting itinerary:", error);
+      // Error toast is handled by api interceptor
     }
   };
 
   const handleTogglePublic = async (id) => {
     try {
       const { data } = await api.patch(`/api/itinerary/public/${id}`);
-      setItineraries((prev) =>
-        prev.map((item) =>
-          item._id === id
-            ? { ...item, isPublic: data.itinerary.isPublic, shareToken: data.shareToken }
-            : item
-        )
-      );
-      toast.success(`Itinerary is now ${data.itinerary.isPublic ? "public" : "private"}`);
+      
+      if (data.success) {
+        setItineraries((prev) =>
+          prev.map((item) =>
+            item._id === id
+              ? { ...item, isPublic: data.itinerary.isPublic, shareToken: data.shareToken }
+              : item
+          )
+        );
+        toast.success(`Itinerary is now ${data.itinerary.isPublic ? "public" : "private"}`);
+      }
     } catch (error) {
-      toast.error("Failed to update itinerary status");
-      console.error(error);
+      console.error("Error updating itinerary:", error);
+      // Error toast is handled by api interceptor
     }
   };
 
   const truncateText = (text, wordCount) => {
+    if (!text) return "";
     const words = text.split(" ");
     return words.length <= wordCount ? text : words.slice(0, wordCount).join(" ") + "...";
   };
@@ -146,27 +180,36 @@ const Itineraries = () => {
     setShowModal(true);
   };
 
-  const handleDownloadPDF = (id) => {
+  const handleDownloadPDF = async (id) => {
     const itinerary = itineraries.find((item) => item._id === id);
-    if (!itinerary) return;
+    if (!itinerary) {
+      toast.error("Itinerary not found");
+      return;
+    }
 
-    fetch(`/api/itinerary/export/${id}`)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `itinerary-${itinerary.location}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      })
-      .catch((error) => {
-        console.error("Error downloading the PDF:", error);
-        toast.error("Failed to download the itinerary PDF");
+    try {
+      toast.info("Preparing your PDF...");
+      
+      const response = await api.get(`/api/itinerary/export/${id}`, {
+        responseType: 'blob'
       });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `itinerary-${itinerary.location.replace(/\s+/g, '-')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success("PDF downloaded successfully");
+    } catch (error) {
+      console.error("Error downloading the PDF:", error);
+      toast.error("Failed to download the itinerary PDF");
+    }
   };
 
   if (loading) {
@@ -200,6 +243,7 @@ const Itineraries = () => {
                   onChange={handleInputChange}
                   placeholder="Where are you going?"
                   required
+                  maxLength={100}
                 />
               </div>
 
@@ -213,6 +257,7 @@ const Itineraries = () => {
                   onChange={handleInputChange}
                   placeholder="e.g., beaches, hiking, museums"
                   required
+                  maxLength={200}
                 />
                 <span className="input-hint">Separate with commas</span>
               </div>
@@ -224,6 +269,7 @@ const Itineraries = () => {
                   id="days"
                   name="days"
                   min="1"
+                  max="30"
                   value={formData.days}
                   onChange={handleInputChange}
                   required
@@ -254,11 +300,6 @@ const Itineraries = () => {
 
           {itineraries.length === 0 ? (
             <div className="empty-state">
-              <img
-                src="/images/empty-travel.svg"
-                alt="No itineraries"
-                className="empty-illustration"
-              />
               <h3>No itineraries yet</h3>
               <p>Create your first itinerary to get started</p>
             </div>
@@ -278,9 +319,11 @@ const Itineraries = () => {
 
                   <div className="itinerary-preview">
                     <ReactMarkdown>{truncateText(itinerary.details, 30)}</ReactMarkdown>
-                    <button className="text-link" onClick={() => handleViewDetails(itinerary)}>
-                      ...more
-                    </button>
+                    {itinerary.details && itinerary.details.split(" ").length > 30 && (
+                      <button className="text-link" onClick={() => handleViewDetails(itinerary)}>
+                        ...more
+                      </button>
+                    )}
                   </div>
 
                   <div className="card-actions">
@@ -298,7 +341,7 @@ const Itineraries = () => {
                         className="action-btn public-btn"
                         onClick={() => handleTogglePublic(itinerary._id)}
                       >
-                        {itinerary.isPublic ? "Private" : "Public"}
+                        {itinerary.isPublic ? "Make Private" : "Make Public"}
                       </button>
                     </div>
 

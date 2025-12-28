@@ -23,18 +23,21 @@ const AppContextProvider = (props) => {
           userLocation: data.user.userLocation || "",
           profileImage: data.user.profileImage || "/profiles/avatar1.png",
           bannerImage: data.user.bannerImage || "/banners/banner1.jpg",
-          isVerified: data.user.isAccountVerified,
+          isAccountVerified: data.user.isAccountVerified,
           savedItineraries: data.user.savedItineraries,
           createdAt: data.user.createdAt,
         };
         setUserData(user);
         localStorage.setItem("user", JSON.stringify(user));
+        return true;
       } else {
-        toast.error(response.data.message);
+        toast.error(data.message || "Failed to fetch user data");
+        return false;
       }
     } catch (error) {
       console.error("Data error:", error);
-      toast.error("Fetching data failed. Please log in again.");
+      // Don't show toast here as api interceptor handles it
+      return false;
     }
   };
 
@@ -49,7 +52,10 @@ const AppContextProvider = (props) => {
 
         if (response.data.success) {
           setIsLoggedin(true);
-          await getUserData();
+          const success = await getUserData();
+          if (!success) {
+            handleLogout();
+          }
         } else {
           handleLogout();
         }
@@ -71,9 +77,19 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUserData(JSON.parse(savedUser));
-      setIsLoggedin(true);
+    const token = localStorage.getItem("token");
+    
+    if (savedUser && token) {
+      try {
+        setUserData(JSON.parse(savedUser));
+        setIsLoggedin(true);
+        // Verify token is still valid
+        getAuthState();
+      } catch (error) {
+        console.error("Error parsing saved user:", error);
+        handleLogout();
+        setLoading(false);
+      }
     } else {
       getAuthState();
     }
@@ -86,6 +102,7 @@ const AppContextProvider = (props) => {
     setIsLoggedin,
     loading,
     handleLogout,
+    getUserData,
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

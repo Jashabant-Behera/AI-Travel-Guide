@@ -7,148 +7,156 @@ import {
   PASSWORD_RESET_TEMPLATE,
   WELCOME_TEMPLATE,
 } from "../config/emailTemplates.js";
+import { asyncHandler, AppError } from "../middleware/errorHandler.js";
 
-export const signup = async (req, res) => {
+export const signup = asyncHandler(async (req, res, next) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ success: false, message: "Required Field Details are Missing" });
+    return next(new AppError("Name, email and password are required", 400));
   }
 
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return next(new AppError("Please provide a valid email address", 400));
+  }
+
+  // Validate password strength
+  if (password.length < 6) {
+    return next(new AppError("Password must be at least 6 characters long", 400));
+  }
+
+  const existingUser = await userModel.findOne({ email });
+
+  if (existingUser) {
+    return next(new AppError("User already exists with this email", 400));
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = new userModel({ name, email, password: hashedPassword });
+
+  await user.save();
+
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  // Send welcome email
   try {
-    const existingUser = await userModel.findOne({ email });
-
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new userModel({ name, email, password: hashedPassword });
-
-    await user.save();
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: email,
-      subject: "Welcome Message",
+      subject: "Welcome to AI Travel Buddy",
       html: WELCOME_TEMPLATE.replace("{{username}}", user.name),
     };
 
     await transporter.sendMail(mailOptions);
-
-    return res.status(201).json({ success: true, message: "Successfully Registered" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred during registration",
-    });
+  } catch (emailError) {
+    console.error("Failed to send welcome email:", emailError);
+    // Don't fail registration if email fails
   }
-};
 
-export const login = async (req, res) => {
+  return res.status(201).json({ 
+    success: true, 
+    message: "Successfully Registered",
+    token 
+  });
+});
+
+export const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ success: false, message: "Email and password are required" });
+    return next(new AppError("Email and password are required", 400));
   }
 
-  try {
-    const user = await userModel.findOne({ email });
+  const user = await userModel.findOne({ email });
 
-    if (!user) {
-      return res.status(401).json({ success: false, message: "User Not Found" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: "Incorrect Password" });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Successfully Logged In",
-      token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        gender: user.gender,
-        location: user.userLocation,
-        userLocation: user.userLocation,
-        profileImage: user.profileImage,
-        bannerImage: user.bannerImage,
-        isAccountVerified: user.isAccountVerified,
-        savedItineraries: user.savedItineraries,
-        createdAt: user.createdAt,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "An error occurred during login" });
+  if (!user) {
+    return next(new AppError("Invalid email or password", 401));
   }
-};
 
-export const logout = async (req, res) => {
-  try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    });
+  const isMatch = await bcrypt.compare(password, user.password);
 
-    return res.status(200).json({ success: true, message: "Logged Out" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "An error occurred during logout" });
+  if (!isMatch) {
+    return next(new AppError("Invalid email or password", 401));
   }
-};
 
-export const sendOTP = async (req, res) => {
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Successfully Logged In",
+    token,
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      gender: user.gender,
+      location: user.userLocation,
+      userLocation: user.userLocation,
+      profileImage: user.profileImage,
+      bannerImage: user.bannerImage,
+      isAccountVerified: user.isAccountVerified,
+      savedItineraries: user.savedItineraries,
+      createdAt: user.createdAt,
+    },
+  });
+});
+
+export const logout = asyncHandler(async (req, res, next) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+  });
+
+  return res.status(200).json({ success: true, message: "Logged Out" });
+});
+
+export const sendOTP = asyncHandler(async (req, res, next) => {
+  const { userId } = req;
+
+  const user = await userModel.findById(userId);
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  if (user.isAccountVerified) {
+    return next(new AppError("Account is already verified", 400));
+  }
+
+  const OTP = String(Math.floor(100000 + Math.random() * 900000));
+
+  user.verifyOTP = OTP;
+  user.verifyOTPExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+
+  await user.save();
+
   try {
-    const { userId } = req;
-
-    const user = await userModel.findById(userId);
-
-    if (user.isAccountVerified) {
-      return res.status(400).json({ success: false, message: "Account is already verified" });
-    }
-
-    const OTP = String(Math.floor(100000 + Math.random() * 900000));
-
-    user.verifyOTP = OTP;
-    user.verifyOTPExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-
-    await user.save();
-
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: user.email,
-      subject: "Account Verification",
+      subject: "Account Verification OTP",
       html: EMAIL_VERIFY_TEMPLATE.replace("{{otp}}", OTP).replace("{{email}}", user.email),
     };
 
@@ -156,186 +164,207 @@ export const sendOTP = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Verification Message Sent to The Mail",
+      message: "Verification OTP sent to your email",
     });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "An error occurred while sending OTP" });
+  } catch (emailError) {
+    // Rollback OTP if email fails
+    user.verifyOTP = "";
+    user.verifyOTPExpireAt = 0;
+    await user.save();
+    
+    return next(new AppError("Failed to send verification email. Please try again later", 500));
   }
-};
+});
 
-export const verifyEmail = async (req, res) => {
+export const verifyEmail = asyncHandler(async (req, res, next) => {
   const userId = req.userId;
   const { OTP } = req.body;
 
   if (!userId || !OTP) {
-    return res.status(400).json({ success: false, message: "Missing Details" });
+    return next(new AppError("User ID and OTP are required", 400));
   }
 
-  try {
-    const user = await userModel.findById(userId);
+  const user = await userModel.findById(userId);
 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
 
-    if (user.verifyOTP === "" || user.verifyOTP !== OTP) {
-      return res.status(400).json({ success: false, message: "Invalid OTP" });
-    }
+  if (user.isAccountVerified) {
+    return next(new AppError("Account is already verified", 400));
+  }
 
-    if (user.verifyOTPExpireAt < Date.now()) {
-      return res.status(400).json({ success: false, message: "OTPis expired" });
-    }
+  if (!user.verifyOTP || user.verifyOTP === "") {
+    return next(new AppError("No OTP found. Please request a new one", 400));
+  }
 
-    user.isAccountVerified = true;
-    user.verifyOTP = "";
-    user.verifyOTPExpireAt = 0;
+  if (user.verifyOTP !== OTP) {
+    return next(new AppError("Invalid OTP", 400));
+  }
 
-    await user.save();
-    return res.status(200).json({ success: true, message: "Email Verified Successfully" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred during email verification",
+  if (user.verifyOTPExpireAt < Date.now()) {
+    return next(new AppError("OTP has expired. Please request a new one", 400));
+  }
+
+  user.isAccountVerified = true;
+  user.verifyOTP = "";
+  user.verifyOTPExpireAt = 0;
+
+  await user.save();
+  
+  return res.status(200).json({ 
+    success: true, 
+    message: "Email verified successfully" 
+  });
+});
+
+export const isAuthenticated = asyncHandler(async (req, res, next) => {
+  const { userId } = req;
+
+  if (!userId) {
+    return next(new AppError("User not authenticated", 401));
+  }
+
+  const user = await userModel.findById(userId);
+  
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  if (!user.isAccountVerified) {
+    return res.status(200).json({ 
+      success: false, 
+      message: "Account not verified",
+      isVerified: false 
     });
   }
-};
 
-export const isAuthenticated = async (req, res) => {
-  try {
-    const { userId } = req;
+  return res.status(200).json({ 
+    success: true, 
+    message: "User is authenticated",
+    isVerified: true 
+  });
+});
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "User not authenticated" });
-    }
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    if (!user.isAccountVerified) {
-      return res.status(403).json({ success: false, message: "Account not verified" });
-    }
-
-    return res.status(200).json({ success: true, message: "User is authenticated" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "Authentication error" });
-  }
-};
-
-export const resetOTP = async (req, res) => {
+export const resetOTP = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ success: false, message: "Email is required" });
+    return next(new AppError("Email is required", 400));
   }
 
+  const user = await userModel.findOne({ email });
+  
+  if (!user) {
+    return next(new AppError("No account found with this email", 404));
+  }
+
+  const OTP = String(Math.floor(100000 + Math.random() * 900000));
+
+  user.resetOTP = OTP;
+  user.resetOTPExpireAt = Date.now() + 15 * 60 * 1000; // 15 minutes
+
+  await user.save();
+
   try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User Not Found" });
-    }
-
-    const OTP = String(Math.floor(100000 + Math.random() * 900000));
-
-    user.resetOTP = OTP;
-    user.resetOTPExpireAt = Date.now() + 15 * 60 * 1000;
-
-    await user.save();
-
     const mailOptions = {
       from: process.env.SENDER_EMAIL,
       to: user.email,
-      subject: "Reset Password",
+      subject: "Password Reset OTP",
       html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}", OTP).replace("{{email}}", user.email),
     };
 
     await transporter.sendMail(mailOptions);
 
-    return res.status(200).json({ success: true, message: "OTPsent to your email" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while sending reset OTP",
+    return res.status(200).json({ 
+      success: true, 
+      message: "Password reset OTP sent to your email" 
     });
+  } catch (emailError) {
+    // Rollback OTP if email fails
+    user.resetOTP = "";
+    user.resetOTPExpireAt = 0;
+    await user.save();
+    
+    return next(new AppError("Failed to send reset email. Please try again later", 500));
   }
-};
+});
 
-export const resetPassword = async (req, res) => {
+export const resetPassword = asyncHandler(async (req, res, next) => {
   const { email, OTP, newPassword } = req.body;
 
   if (!email || !OTP || !newPassword) {
-    return res.status(400).json({
-      success: false,
-      message: "Email, OTP, and new Password are required",
-    });
+    return next(new AppError("Email, OTP, and new password are required", 400));
   }
 
-  try {
-    const user = await userModel.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    if (user.resetOTP !== OTP || user.resetOTP === "" || user.resetOTPExpireAt < Date.now()) {
-      return res.status(400).json({ success: false, message: "Invalid or expired OTP" });
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    user.resetOTP = "";
-    user.resetOTPExpireAt = 0;
-
-    await user.save();
-    return res.status(200).json({ success: true, message: "Password reset successfully" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred during password reset",
-    });
+  if (newPassword.length < 6) {
+    return next(new AppError("Password must be at least 6 characters long", 400));
   }
-};
 
-export const getUserData = async (req, res) => {
-  try {
-    const userId = req.userId;
-
-    if (!userId) {
-      return res.status(400).json({ success: false, message: "User ID is required" });
-    }
-
-    const user = await userModel
-      .findById(userId)
-      .select(
-        "name email gender userLocation profileImage bannerImage isAccountVerified savedItineraries createdAt"
-      );
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    return res.json({ success: true, user: user });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "Internal server error" });
+  const user = await userModel.findOne({ email });
+  
+  if (!user) {
+    return next(new AppError("User not found", 404));
   }
-};
 
-export const verifySession = async (req, res) => {
-  try {
-    const user = await userModel.findById(req.body.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    return res
-      .status(200)
-      .json({ success: true, user: { id: user._id, name: user.name, email: user.email } });
-  } catch (error) {
-    return res.status(401).json({ success: false, message: "Session invalid" });
+  if (!user.resetOTP || user.resetOTP === "") {
+    return next(new AppError("No reset request found. Please request a new OTP", 400));
   }
-};
+
+  if (user.resetOTP !== OTP) {
+    return next(new AppError("Invalid OTP", 400));
+  }
+
+  if (user.resetOTPExpireAt < Date.now()) {
+    return next(new AppError("OTP has expired. Please request a new one", 400));
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  user.resetOTP = "";
+  user.resetOTPExpireAt = 0;
+
+  await user.save();
+  
+  return res.status(200).json({ 
+    success: true, 
+    message: "Password reset successfully" 
+  });
+});
+
+export const getUserData = asyncHandler(async (req, res, next) => {
+  const userId = req.userId;
+
+  if (!userId) {
+    return next(new AppError("User ID is required", 400));
+  }
+
+  const user = await userModel
+    .findById(userId)
+    .select(
+      "name email gender userLocation profileImage bannerImage isAccountVerified savedItineraries createdAt"
+    );
+
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+
+  return res.json({ success: true, user: user });
+});
+
+export const verifySession = asyncHandler(async (req, res, next) => {
+  const user = await userModel.findById(req.body.userId);
+  
+  if (!user) {
+    return next(new AppError("User not found", 404));
+  }
+  
+  return res.status(200).json({ 
+    success: true, 
+    user: { 
+      id: user._id, 
+      name: user.name, 
+      email: user.email 
+    } 
+  });
+});

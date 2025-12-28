@@ -8,21 +8,17 @@ import {
     updateItinerary, 
     deleteItinerary, 
     publicItinerary, 
-    getPublicItinerary, 
-    exportItinerary,
-    getPublicItineraryByToken
+    getPublicItineraryByToken,
+    exportItinerary
  } from "../controllers/itineraryController.js";
 
 router.post("/create", verifyToken, createAIItinerary);
 router.get("/", verifyToken, getAllItineraries);
+router.get("/export/:id", exportItinerary);
+router.get("/share/:token", getPublicItineraryByToken);
 router.get("/:id", verifyToken, getItineraryById);
 router.put("/:id", verifyToken, updateItinerary);
 router.delete("/:id", verifyToken, deleteItinerary);
 router.patch("/public/:id", verifyToken, publicItinerary);
-router.get('/public/:token', getPublicItineraryByToken);
-router.get("/share/:token", getPublicItinerary);
-router.get("/export/:id", exportItinerary);
-
-
 
 export default router;

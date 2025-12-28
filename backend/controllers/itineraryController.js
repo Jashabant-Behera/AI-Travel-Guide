@@ -2,163 +2,188 @@ import PDFDocument from "pdfkit";
 import { WritableStreamBuffer } from "stream-buffers";
 import Itinerary from "../models/Itinerary.js";
 import aiService from "../services/aiService.js";
+import { asyncHandler, AppError } from "../middleware/errorHandler.js";
 
-const createAIItinerary = async (req, res) => {
-  try {
-    const { location, preferences, days } = req.body;
-    const userId = req.user._id;
+const createAIItinerary = asyncHandler(async (req, res, next) => {
+  const { location, preferences, days } = req.body;
+  const userId = req.user._id;
 
-    if (!location || !preferences || !days) {
-      return res.status(400).json({
-        error: "Location, preferences and days are required",
-        received: req.body,
-      });
-    }
-
-    const aiGeneratedText = await aiService.generateItinerary(location, preferences, days);
-
-    const itinerary = new Itinerary({
-      user: userId,
-      location,
-      preferences,
-      days,
-      details: aiGeneratedText,
-    });
-
-    await itinerary.save();
-
-    res.status(201).json({
-      message: "Itinerary created successfully",
-      itinerary,
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: "Complete error details",
-      message: error.message,
-      stack: error.stack,
-    });
+  if (!location || !preferences || !days) {
+    return next(new AppError("Location, preferences and days are required", 400));
   }
-};
 
-const getAllItineraries = async (req, res) => {
-  try {
-
-
-    const itineraries = await Itinerary.find({ user: req.userId }).sort({ createdAt: -1 });
-
-
-    res.json(itineraries);
-  } catch (err) {
-    console.error("Error in getAllItineraries:", err);
-    res.status(500).json({
-      error: "Error fetching itineraries",
-      details: err.message,
-    });
+  if (!Array.isArray(preferences) || preferences.length === 0) {
+    return next(new AppError("Preferences must be a non-empty array", 400));
   }
-};
 
-const getItineraryById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(`Fetching itinerary ${id} for user ${req.userId}`);
-
-    const itinerary = await Itinerary.findOne({
-      _id: id,
-      user: req.userId,
-    });
-
-    if (!itinerary) {
-      console.log("Itinerary not found or access denied");
-      return res.status(404).json({
-        error: "Itinerary not found or you don't have permission",
-      });
-    }
-
-    res.json(itinerary);
-  } catch (err) {
-    console.error("Error in getItineraryById:", err);
-    res.status(500).json({
-      error: "Error fetching itinerary",
-      details: err.message,
-    });
+  if (days < 1 || days > 30) {
+    return next(new AppError("Days must be between 1 and 30", 400));
   }
-};
 
-const updateItinerary = async (req, res) => {
-  try {
-    const { location, dates, activities } = req.body;
-    const itinerary = await Itinerary.findOneAndUpdate(
-      { _id: req.params.id, user: req.userId },
-      { location, dates, activities },
-      { new: true }
-    );
-    if (!itinerary) return res.status(404).json({ error: "Itinerary not found" });
-    res.json(itinerary);
-  } catch (err) {
-    res.status(500).json({ error: "Error updating itinerary" });
+  const aiGeneratedText = await aiService.generateItinerary(location, preferences, days);
+
+  if (!aiGeneratedText) {
+    return next(new AppError("Failed to generate itinerary. Please try again", 500));
   }
-};
 
-const deleteItinerary = async (req, res) => {
-  try {
-    const itinerary = await Itinerary.findOneAndDelete({ _id: req.params.id, user: req.userId });
-    if (!itinerary) return res.status(404).json({ error: "Itinerary not found" });
-    res.json({ message: "Itinerary deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: "Error deleting itinerary" });
+  const itinerary = new Itinerary({
+    user: userId,
+    location: location.trim(),
+    preferences,
+    days,
+    details: aiGeneratedText,
+  });
+
+  await itinerary.save();
+
+  res.status(201).json({
+    success: true,
+    message: "Itinerary created successfully",
+    itinerary,
+  });
+});
+
+const getAllItineraries = asyncHandler(async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+  
+  const itineraries = await Itinerary.find({ user: req.userId })
+    .sort({ createdAt: -1 })
+    .limit(limit * 1)
+    .skip((page - 1) * limit)
+    .lean();
+
+  const count = await Itinerary.countDocuments({ user: req.userId });
+
+  res.json({
+    success: true,
+    itineraries,
+    totalPages: Math.ceil(count / limit),
+    currentPage: page,
+    total: count
+  });
+});
+
+const getItineraryById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return next(new AppError("Invalid itinerary ID", 400));
   }
-};
 
-const publicItinerary = async (req, res) => {
-  try {
-    const itinerary = await Itinerary.findById(req.params.id);
-    if (!itinerary) {
-      return res.status(400).json({ message: "Itinerary not Found" });
-    }
+  const itinerary = await Itinerary.findOne({
+    _id: id,
+    user: req.userId,
+  });
 
-    itinerary.isPublic = !itinerary.isPublic;
-
-    if (itinerary.isPublic) {
-      itinerary.shareToken = Math.random().toString(36).substring(2, 10) + Date.now();
-    } else if (!itinerary.isPublic) {
-      itinerary.shareToken = undefined;
-    }
-    await itinerary.save();
-    res.json({
-      message: "Itinerary public status updated",
-      itinerary,
-      shareToken: itinerary.shareToken || "null",
-    });
-  } catch (error) {
-    console.error("Error toggling itinerary public status:", error);
-    res.status(500).json({ error: "Server error" });
+  if (!itinerary) {
+    return next(new AppError("Itinerary not found or you don't have permission", 404));
   }
-};
 
-const getPublicItinerary = async (req, res) => {
-  try {
-    const { token } = req.params;
-    const itinerary = await Itinerary.findOne({ shareToken: token, isPublic: true });
+  res.json({
+    success: true,
+    itinerary
+  });
+});
 
-    if (!itinerary) {
-      return res.status(404).json({ message: "Public itinerary not found" });
-    }
-
-    return res.json({ itinerary });
-  } catch (error) {
-    console.error("Error fetching public itinerary:", error);
-    res.status(500).json({ error: "Server error" });
+const updateItinerary = asyncHandler(async (req, res, next) => {
+  const { location, dates, activities } = req.body;
+  
+  const itinerary = await Itinerary.findOneAndUpdate(
+    { _id: req.params.id, user: req.userId },
+    { location, dates, activities },
+    { new: true, runValidators: true }
+  );
+  
+  if (!itinerary) {
+    return next(new AppError("Itinerary not found or you don't have permission", 404));
   }
-};
+  
+  res.json({
+    success: true,
+    message: "Itinerary updated successfully",
+    itinerary
+  });
+});
 
-const exportItinerary = async (req, res) => {
+const deleteItinerary = asyncHandler(async (req, res, next) => {
+  const itinerary = await Itinerary.findOneAndDelete({ 
+    _id: req.params.id, 
+    user: req.userId 
+  });
+  
+  if (!itinerary) {
+    return next(new AppError("Itinerary not found or you don't have permission", 404));
+  }
+  
+  res.json({ 
+    success: true,
+    message: "Itinerary deleted successfully" 
+  });
+});
+
+const publicItinerary = asyncHandler(async (req, res, next) => {
+  const itinerary = await Itinerary.findOne({
+    _id: req.params.id,
+    user: req.userId
+  });
+  
+  if (!itinerary) {
+    return next(new AppError("Itinerary not found or you don't have permission", 404));
+  }
+
+  itinerary.isPublic = !itinerary.isPublic;
+
+  if (itinerary.isPublic) {
+    itinerary.shareToken = Math.random().toString(36).substring(2, 10) + Date.now();
+  } else {
+    itinerary.shareToken = undefined;
+  }
+  
+  await itinerary.save();
+  
+  res.json({
+    success: true,
+    message: `Itinerary is now ${itinerary.isPublic ? 'public' : 'private'}`,
+    itinerary,
+    shareToken: itinerary.shareToken || null,
+  });
+});
+
+const getPublicItineraryByToken = asyncHandler(async (req, res, next) => {
+  const { token } = req.params;
+  
+  if (!token) {
+    return next(new AppError("Share token is required", 400));
+  }
+
+  const itinerary = await Itinerary.findOne({ 
+    shareToken: token, 
+    isPublic: true 
+  }).populate('user', 'name');
+
+  if (!itinerary) {
+    return next(new AppError("Public itinerary not found or has been made private", 404));
+  }
+
+  res.json({ 
+    success: true,
+    itinerary 
+  });
+});
+
+const exportItinerary = asyncHandler(async (req, res, next) => {
+  const itinerary = await Itinerary.findById(req.params.id);
+
+  if (!itinerary) {
+    return next(new AppError("Itinerary not found", 404));
+  }
+
+  // Check if user owns the itinerary or if it's public
+  if (itinerary.user.toString() !== req.userId && !itinerary.isPublic) {
+    return next(new AppError("You don't have permission to export this itinerary", 403));
+  }
+
   try {
-    const itinerary = await Itinerary.findById(req.params.id);
-
-    if (!itinerary) {
-      return res.status(404).json({ message: "Itinerary not found" });
-    }
-
     const doc = new PDFDocument();
     const bufferStream = new WritableStreamBuffer();
 
@@ -166,7 +191,6 @@ const exportItinerary = async (req, res) => {
 
     doc.fontSize(20).text(`Itinerary for ${itinerary.location}`, { align: "center" });
     doc.moveDown();
-
     doc.fontSize(14).text(`Days: ${itinerary.days}`);
     doc.moveDown();
     doc.fontSize(12).text(itinerary.details, { align: "left" });
@@ -178,27 +202,14 @@ const exportItinerary = async (req, res) => {
       res.setHeader("Content-Disposition", `attachment; filename=itinerary-${itinerary._id}.pdf`);
       res.send(pdfData);
     });
+
+    bufferStream.on("error", (error) => {
+      return next(new AppError("Failed to generate PDF", 500));
+    });
   } catch (error) {
-    console.error("Error exporting itinerary PDF:", error);
-    return res.status(500).json({ message: "Server error" });
+    return next(new AppError("Failed to export itinerary", 500));
   }
-};
-
-const getPublicItineraryByToken = async (req, res) => {
-  try {
-    const { token } = req.params;
-    const itinerary = await Itinerary.findOne({ shareToken: token, isPublic: true });
-
-    if (!itinerary) {
-      return res.status(404).json({ message: "Public itinerary not found" });
-    }
-
-    return res.json({ itinerary });
-  } catch (error) {
-    console.error("Error fetching public itinerary by token:", error);
-    res.status(500).json({ error: "Server error" });
-  }
-};
+});
 
 export {
   createAIItinerary,
@@ -207,7 +218,6 @@ export {
   updateItinerary,
   deleteItinerary,
   publicItinerary,
-  getPublicItinerary,
   exportItinerary,
   getPublicItineraryByToken,
 };

@@ -12,9 +12,22 @@ const Recommendations = () => {
   const [loading, setLoading] = useState(false);
   const recommendationRef = useRef(null);
 
+  const validateInput = () => {
+    if (!location.trim()) {
+      toast.warning("Please enter a location");
+      return false;
+    }
+    
+    if (!preferences.trim()) {
+      toast.warning("Please enter your preferences");
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleGenerate = async () => {
-    if (!location || !preferences) {
-      toast.warning("Please fill in both fields.");
+    if (!validateInput()) {
       return;
     }
 
@@ -22,39 +35,78 @@ const Recommendations = () => {
       setLoading(true);
       setRecommendation(null);
 
+      const preferencesArray = preferences
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean);
+
+      if (preferencesArray.length === 0) {
+        toast.warning("Please enter at least one preference");
+        setLoading(false);
+        return;
+      }
+
       const { data } = await api.post("/api/recommendations", {
-        location,
-        preferences: preferences.split(",").map((p) => p.trim()),
+        location: location.trim(),
+        preferences: preferencesArray,
       });
 
-      setRecommendation(data.recommendation);
+      if (data.success && data.recommendation) {
+        setRecommendation(data.recommendation);
+        toast.success("Recommendations generated successfully!");
+      } else {
+        toast.error("Failed to generate recommendations");
+      }
     } catch (error) {
-      toast.error("Failed to generate recommendations.");
-      console.error(error);
+      console.error("Error generating recommendations:", error);
+      // Error toast is handled by api interceptor
     } finally {
       setLoading(false);
     }
   };
 
   const handleDownload = () => {
-    if (!recommendationRef.current) return;
+    if (!recommendationRef.current) {
+      toast.error("No recommendation to download");
+      return;
+    }
 
-    const element = recommendationRef.current.cloneNode(true);
-    const buttons = element.querySelector(".download-btn-container");
-    if (buttons) buttons.remove();
+    try {
+      toast.info("Preparing your PDF...");
+      
+      const element = recommendationRef.current.cloneNode(true);
+      const buttons = element.querySelector(".download-btn-container");
+      if (buttons) buttons.remove();
 
-    import("html2pdf.js").then(({ default: html2pdf }) => {
-      html2pdf()
-        .set({
-          margin: 0.5,
-          filename: `Travel_Recommendations_${location.replace(/\s+/g, '_')}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-        })
-        .from(element)
-        .save();
-    });
+      import("html2pdf.js").then(({ default: html2pdf }) => {
+        html2pdf()
+          .set({
+            margin: 0.5,
+            filename: `Travel_Recommendations_${location.replace(/\s+/g, '_')}.pdf`,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+          })
+          .from(element)
+          .save()
+          .then(() => {
+            toast.success("PDF downloaded successfully!");
+          })
+          .catch((error) => {
+            console.error("PDF generation error:", error);
+            toast.error("Failed to generate PDF");
+          });
+      });
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download recommendations");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !loading) {
+      handleGenerate();
+    }
   };
 
   return (
@@ -68,14 +120,23 @@ const Recommendations = () => {
           placeholder="Enter location (e.g., Paris, France)"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          onKeyPress={handleKeyPress}
+          maxLength={100}
+          disabled={loading}
         />
         <input
           type="text"
           placeholder="Interests (comma separated, e.g., museums, food, hiking)"
           value={preferences}
           onChange={(e) => setPreferences(e.target.value)}
+          onKeyPress={handleKeyPress}
+          maxLength={200}
+          disabled={loading}
         />
-        <button onClick={handleGenerate} disabled={loading}>
+        <button 
+          onClick={handleGenerate} 
+          disabled={loading || !location.trim() || !preferences.trim()}
+        >
           {loading ? "Generating..." : "Get Recommendations"}
         </button>
       </div>
@@ -102,7 +163,7 @@ const Recommendations = () => {
           <div className="download-btn-container">
             <button onClick={handleDownload} className="download-btn">
               Download as PDF
-            </button>
+</button>
           </div>
         </div>
       )}
